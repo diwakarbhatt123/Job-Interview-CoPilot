@@ -56,6 +56,12 @@ enrichment only where it adds measurable value.
   - Run tests for a service: ./gradlew :services:job-analyzer-service:test
   - Format/lint (if configured): ./gradlew spotlessApply or check
   - Java formatting standard: Google Java Style (enforced via IDE and future Gradle formatting plugin)
+- Makefile (shortcuts):
+  - Build one: `make build-account` (or fit/analyzer/plan/profile)
+  - Build all: `make build-all`
+  - Run one: `make bootrun-account` (or fit/analyzer/plan/profile)
+  - Lint/format one: `make lint-fix-account` (or fit/analyzer/plan/profile)
+  - Lint/format all: `make lint-fix-all`
 
 ## Local Development Overview
 
