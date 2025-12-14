@@ -20,26 +20,28 @@ enrichment only where it adds measurable value.
 ```
 .
 ├─ gradlew / gradlew.bat
-├─ build.gradle.kts          # root config for all services
-├─ settings.gradle.kts       # declares all Gradle projects
+├─ build.gradle              # root config for all services (Groovy, placeholder)
+├─ settings.gradle           # declares Gradle projects (placeholder)
 ├─ services/
-│  ├─ interview-service/     # Spring Boot, owns interview prep data
-│  ├─ job-service/           # Spring Boot, owns job tracking data
-│  ├─ notification-service/  # Spring Boot, outbound comms
-│  └─ ...                    # additional independent services
-├─ frontend/                 # Next.js app
-├─ gateway/                  # nginx configs
-├─ libs/
-│  ├─ auth/                  # JWT/auth utilities
-│  └─ ...                    # other shared libraries
+│  ├─ account-service/       # Spring Boot (placeholder)
+│  ├─ fit-score-service/     # Spring Boot (placeholder)
+│  ├─ job-analyzer-service/  # Spring Boot (placeholder)
+│  ├─ prep-plan-service/     # Spring Boot (placeholder)
+│  └─ profile-service/       # Spring Boot (placeholder)
+├─ frontend/                 # Next.js app scaffold (placeholder)
+├─ gateway/                  # nginx configs (placeholder)
+├─ shared/
+│  ├─ auth/                  # JWT/auth utilities (placeholder)
+│  └─ contracts/             # shared DTO/contracts (placeholder)
 ├─ infra/
-│  └─ docker-compose.yml     # local orchestration
+│  ├─ compose/               # docker-compose definitions (placeholder)
+│  ├─ docker/                # Dockerfiles/build assets (placeholder)
+│  └─ nginx/                 # gateway image/config assets (placeholder)
 └─ docs/                     # architecture and ADRs
 ```
 ## Architecture Principles
 
-- Monorepo: single source of truth for APIs, contracts, and shared libs; synchronized changes land atomically; consistent tooling via one Gradle
-  wrapper.
+- Monorepo: single source of truth for APIs, contracts, and shared libs; synchronized changes land atomically; consistent tooling via one Gradle wrapper.
 - Independent deployability: each service is its own Gradle project, owns its data store, and is releasable without waiting on others; gateway
   decouples clients from service topology.
 - Data ownership: no shared databases; services expose APIs for cross-domain needs.
@@ -50,15 +52,16 @@ enrichment only where it adds measurable value.
 - Gradle wrapper at root; one project per service.
 - Examples:
   - Run all service builds: ./gradlew build
-  - Build a single service: ./gradlew :services:interview-service:build
-  - Run tests for a service: ./gradlew :services:job-service:test
+  - Build a single service: ./gradlew :services:account-service:build
+  - Run tests for a service: ./gradlew :services:job-analyzer-service:test
   - Format/lint (if configured): ./gradlew spotlessApply or check
+  - Java formatting standard: Google Java Style (enforced via IDE and future Gradle formatting plugin)
 
 ## Local Development Overview
 
-- Start core stack (services, gateway, supporting deps) via Docker Compose in infra/.
+- Start core stack (services, gateway, supporting deps) via Docker Compose definitions under infra/compose (placeholder until wired).
 - Develop a service locally:
-  - ./gradlew :services:interview-service:bootRun
+  - ./gradlew :services:account-service:bootRun
   - Point frontend or API clients at the gateway base URL exposed by Compose.
 - Frontend dev:
   - From frontend/: install deps, npm run dev (or pnpm dev) with envs matching gateway endpoints.
