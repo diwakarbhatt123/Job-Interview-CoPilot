@@ -70,3 +70,13 @@ lint-fix-plan:
 	./gradlew -p services/prep-plan-service spotlessApply
 
 lint-fix-all: lint-fix-account lint-fix-profile lint-fix-analyzer lint-fix-fit lint-fix-plan
+
+nginx-up:
+	nginx -c "$(HOME)/Projects/Job&InteviewCoPilot/project/Job-Interview-CoPilot/gateway/nginx.conf"
+	@echo "Nginx server started."
+
+nginx-down:
+	nginx -c "$(HOME)/Projects/Job&InteviewCoPilot/project/Job-Interview-CoPilot/gateway/nginx.conf" -s stop
+
+run-all: nginx-up nginx-down run-all
+	@echo "Nginx and all services are running."
