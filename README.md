@@ -23,13 +23,14 @@ enrichment only where it adds measurable value.
 ├─ build.gradle              # root config for all services (Groovy, placeholder)
 ├─ settings.gradle           # declares Gradle projects (placeholder)
 ├─ services/
-│  ├─ account-service/       # Spring Boot (placeholder)
-│  ├─ fit-score-service/     # Spring Boot (placeholder)
-│  ├─ job-analyzer-service/  # Spring Boot (placeholder)
-│  ├─ prep-plan-service/     # Spring Boot (placeholder)
-│  └─ profile-service/       # Spring Boot (placeholder)
+│  ├─ README.md              # service-level conventions
+│  ├─ account-service/       # Spring Boot (skeleton)
+│  ├─ fit-score-service/     # Spring Boot (skeleton)
+│  ├─ job-analyzer-service/  # Spring Boot (skeleton)
+│  ├─ prep-plan-service/     # Spring Boot (skeleton)
+│  └─ profile-service/       # Spring Boot (skeleton)
 ├─ frontend/                 # Next.js app scaffold (placeholder)
-├─ gateway/                  # nginx configs (placeholder)
+├─ gateway/                  # nginx configs (entry: nginx.conf; extend via conf.d/)
 ├─ shared/
 │  ├─ auth/                  # JWT/auth utilities (placeholder)
 │  └─ contracts/             # shared DTO/contracts (placeholder)
@@ -62,6 +63,7 @@ enrichment only where it adds measurable value.
   - Run one: `make bootrun-account` (or fit/analyzer/plan/profile)
   - Lint/format one: `make lint-fix-account` (or fit/analyzer/plan/profile)
   - Lint/format all: `make lint-fix-all`
+  - Extend: add frontend/gateway/infra targets as they come online.
 
 ## Local Development Overview
 
@@ -82,7 +84,7 @@ enrichment only where it adds measurable value.
 
 ## Project Status
 
-Early-stage MVP: core services scaffolded, rule-based flows prioritized; LLM features gated and optional.
+Early-stage MVP scaffolding: directories, service READMEs, Makefile shortcuts, and ADRs are in place; service code, gateway config, and infra compose files are still placeholders. Rule-based flows are prioritized; LLM enrichment remains optional.
 
 ## Explicit Non-Goals
 
