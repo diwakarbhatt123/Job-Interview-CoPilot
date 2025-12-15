@@ -1,7 +1,8 @@
 .PHONY: \
 	build-account build-fit build-analyzer build-plan build-profile build-all \
 	bootrun-account bootrun-fit bootrun-analyzer bootrun-plan bootrun-profile bootrun-all \
-	lint-fix-account lint-fix-profile lint-fix-analyzer lint-fix-fit lint-fix-plan lint-fix-all
+	lint-fix-account lint-fix-profile lint-fix-analyzer lint-fix-fit lint-fix-plan lint-fix-all \
+	nginx-up nginx-down run-all
 
 build-account:
 	@echo "Building Account Service..."
@@ -78,5 +79,5 @@ nginx-up:
 nginx-down:
 	nginx -c "$(HOME)/Projects/Job&InteviewCoPilot/project/Job-Interview-CoPilot/gateway/nginx.conf" -s stop
 
-run-all: nginx-up nginx-down run-all
+run-all: nginx-up run-all
 	@echo "Nginx and all services are running."
