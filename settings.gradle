@@ -1,2 +1,4 @@
 rootProject.name = "interview-job-copilot"
 
+
+include 'shared:libs:auth-core'
