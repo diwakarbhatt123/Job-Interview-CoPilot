@@ -1,36 +1,30 @@
 package org.jobcopilot.auth.validator;
 
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.JwtException;
-import lombok.Data;
-import org.jobcopilot.auth.model.ValidatedToken;
-
+import io.jsonwebtoken.Jwts;
+import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.time.Instant;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 import java.util.regex.Pattern;
+import lombok.Data;
+import org.jobcopilot.auth.model.ValidatedToken;
 
 @Data
 public class JwtTokenValidator implements TokenValidator {
   private final PublicKey publicKey;
   private final String issuer;
 
-  private static final Pattern RS256_ALG_PATTERN =
-      Pattern.compile("\"alg\"\\s*:\\s*\"RS256\"");
+  private static final Pattern RS256_ALG_PATTERN = Pattern.compile("\"alg\"\\s*:\\s*\"RS256\"");
 
   @Override
   public ValidatedToken validateAndDecodeToken(String token) {
     requireRs256Header(token);
 
     var jwt =
-        Jwts.parser()
-            .verifyWith(publicKey)
-            .requireIssuer(issuer)
-            .build()
-            .parseSignedClaims(token);
+        Jwts.parser().verifyWith(publicKey).requireIssuer(issuer).build().parseSignedClaims(token);
 
     var claims = jwt.getPayload();
 
@@ -53,8 +47,7 @@ public class JwtTokenValidator implements TokenValidator {
       throw new JwtException("Invalid JWT format");
     }
 
-    String headerJson =
-        new String(Base64.getUrlDecoder().decode(parts[0]), StandardCharsets.UTF_8);
+    String headerJson = new String(Base64.getUrlDecoder().decode(parts[0]), StandardCharsets.UTF_8);
     if (!RS256_ALG_PATTERN.matcher(headerJson).find()) {
       throw new JwtException("Unsupported JWT alg (expected RS256)");
     }

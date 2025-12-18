@@ -6,6 +6,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class JWTTokenValidatorConfig extends TokenValidatorConfig {
-    private final String publicKeyPath;
-    private final String issuer;
+  private final String publicKeyPath;
+  private final String issuer;
 }

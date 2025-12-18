@@ -1,6 +1,7 @@
 import com.github.spotbugs.snom.SpotBugsTask
 import org.gradle.api.reporting.SingleFileReport
 import com.diffplug.gradle.spotless.SpotlessTask
+import io.spring.gradle.dependencymanagement.org.apache.maven.model.Build
 
 plugins {
 	java
@@ -69,6 +70,12 @@ spotbugs {
     toolVersion.set("4.9.8")
     effort.set(com.github.spotbugs.snom.Effort.MAX)
     reportLevel.set(com.github.spotbugs.snom.Confidence.MEDIUM)
+}
+
+tasks.build {
+    dependsOn(tasks.withType<SpotlessTask>())
+    dependsOn(tasks.withType<SpotBugsTask>())
+    dependsOn(tasks.test)
 }
 
 tasks.withType<SpotBugsTask>().configureEach {

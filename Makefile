@@ -75,7 +75,10 @@ lint-fix-fit:
 lint-fix-plan:
 	./gradlew -p services/prep-plan-service spotlessApply
 
-lint-fix-all: lint-fix-account lint-fix-profile lint-fix-analyzer lint-fix-fit lint-fix-plan
+lint-fix-auth-core:
+	./gradlew -p shared/libs/auth-core spotlessApply
+
+lint-fix-all: lint-fix-account lint-fix-profile lint-fix-analyzer lint-fix-fit lint-fix-plan lint-fix-auth-core
 
 nginx-up:
 	nginx -c "$(HOME)/Projects/Job&InteviewCoPilot/project/Job-Interview-CoPilot/gateway/nginx.conf"

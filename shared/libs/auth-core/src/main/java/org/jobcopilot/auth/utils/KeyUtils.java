@@ -1,7 +1,5 @@
 package org.jobcopilot.auth.utils;
 
-import lombok.experimental.UtilityClass;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,6 +10,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class KeyUtils {
@@ -31,7 +30,8 @@ public class KeyUtils {
   }
 
   /** Load RSA public key from a PEM file. */
-  public PublicKey getPublicKeyFromPem(String pemPath) throws IOException, GeneralSecurityException {
+  public PublicKey getPublicKeyFromPem(String pemPath)
+      throws IOException, GeneralSecurityException {
     String pem = Files.readString(Path.of(pemPath));
     byte[] keyBytes = decodePem(pem, "PUBLIC KEY");
     var spec = new X509EncodedKeySpec(keyBytes);
@@ -40,8 +40,7 @@ public class KeyUtils {
 
   private byte[] decodePem(String pem, String type) {
     String normalized =
-        pem
-            .replace("-----BEGIN " + type + "-----", "")
+        pem.replace("-----BEGIN " + type + "-----", "")
             .replace("-----END " + type + "-----", "")
             .replaceAll("\\s", "");
     return Base64.getDecoder().decode(normalized);
