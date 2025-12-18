@@ -1,35 +1,40 @@
 .PHONY: \
-	build-account build-fit build-analyzer build-plan build-profile build-all \
+	build-account build-fit build-analyzer build-plan build-profile build-auth-core build-all \
 	bootrun-account bootrun-fit bootrun-analyzer bootrun-plan bootrun-profile bootrun-all \
 	lint-fix-account lint-fix-profile lint-fix-analyzer lint-fix-fit lint-fix-plan lint-fix-all \
 	nginx-up nginx-down run-all
 
 build-account:
 	@echo "Building Account Service..."
-	./gradlew -p services/account-service build
+	./gradlew -p services/account-service build test
 	@echo "Account service built successfully."
 
 build-fit:
 	@echo "Building Fit Score Service..."
-	./gradlew -p services/fit-score-service build
+	./gradlew -p services/fit-score-service build test
 	@echo "Fit Score service built successfully."
 
 build-analyzer:
 	@echo "Building Job Analyzer Service..."
-	./gradlew -p services/job-analyzer-service build
+	./gradlew -p services/job-analyzer-service build test
 	@echo "Job Analyzer service built successfully."
 
 build-plan:
 	@echo "Building Prep Plan Service..."
-	./gradlew -p services/prep-plan-service build
+	./gradlew -p services/prep-plan-service build test
 	@echo "Prep Plan service built successfully."
 
 build-profile:
 	@echo "Building Profile Service..."
-	./gradlew -p services/profile-service build
+	./gradlew -p services/profile-service build test
 	@echo "Profile service built successfully."
 
-build-all: build-account build-fit build-analyzer build-plan build-profile
+build-auth-core:
+	@echo "Building Auth Core Library..."
+	./gradlew -p shared/libs/auth-core build test
+	@echo "Auth Core library built successfully."
+
+build-all: build-account build-fit build-analyzer build-plan build-profile build-auth-core
 	@echo "All services built successfully."
 
 bootrun-account:
@@ -70,7 +75,10 @@ lint-fix-fit:
 lint-fix-plan:
 	./gradlew -p services/prep-plan-service spotlessApply
 
-lint-fix-all: lint-fix-account lint-fix-profile lint-fix-analyzer lint-fix-fit lint-fix-plan
+lint-fix-auth-core:
+	./gradlew -p shared/libs/auth-core spotlessApply
+
+lint-fix-all: lint-fix-account lint-fix-profile lint-fix-analyzer lint-fix-fit lint-fix-plan lint-fix-auth-core
 
 nginx-up:
 	nginx -c "$(HOME)/Projects/Job&InteviewCoPilot/project/Job-Interview-CoPilot/gateway/nginx.conf"

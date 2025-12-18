@@ -1,5 +1,7 @@
+import com.diffplug.gradle.spotless.SpotlessTask
 import com.github.spotbugs.snom.SpotBugsTask
 import org.gradle.api.reporting.SingleFileReport
+import org.gradle.kotlin.dsl.withType
 
 plugins {
 	java
@@ -32,6 +34,7 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.jobcopilot:auth-core:0.0.1-SNAPSHOT")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
@@ -80,4 +83,10 @@ tasks.withType<SpotBugsTask>().configureEach {
             required.set(false)
         }
     }
+}
+
+tasks.build {
+    dependsOn(tasks.withType<SpotlessTask>())
+    dependsOn(tasks.withType<SpotBugsTask>())
+    dependsOn(tasks.test)
 }

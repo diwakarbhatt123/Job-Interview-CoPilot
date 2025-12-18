@@ -1,5 +1,7 @@
+import com.diffplug.gradle.spotless.SpotlessTask
 import com.github.spotbugs.snom.SpotBugsTask
 import org.gradle.api.reporting.SingleFileReport
+import org.gradle.kotlin.dsl.withType
 
 plugins {
 	java
@@ -80,4 +82,10 @@ tasks.withType<SpotBugsTask>().configureEach {
             required.set(false)
         }
     }
+}
+
+tasks.build {
+    dependsOn(tasks.withType<SpotlessTask>())
+    dependsOn(tasks.withType<SpotBugsTask>())
+    dependsOn(tasks.test)
 }
