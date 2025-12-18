@@ -1,12 +1,12 @@
 package org.jobcopilot.auth.generator;
 
+import static java.util.Objects.isNull;
+
 import io.jsonwebtoken.Jwts;
 import java.security.PrivateKey;
 import java.time.Instant;
 import java.util.Date;
 import lombok.Data;
-
-import static java.util.Objects.isNull;
 
 @Data
 public class JWTTokenGenerator implements TokenGenerator {
