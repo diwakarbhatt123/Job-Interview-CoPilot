@@ -89,3 +89,29 @@ nginx-down:
 
 run-all: nginx-up run-all
 	@echo "Nginx and all services are running."
+
+################ Frontend Services ################
+fe-install:
+	@echo "Installing frontend dependencies..."
+	 pnpm -C frontend/job-interview-copilot install
+	@echo "Frontend dependencies installed."
+
+fe-dev:
+	@echo "Starting frontend development server..."
+	 pnpm -C frontend/job-interview-copilot dev
+	@echo "Frontend development server is running."
+
+fe-build:
+	@echo "Building frontend application..."
+	 pnpm -C frontend/job-interview-copilot build
+	@echo "Frontend application built successfully."
+
+fe-lint:
+	@echo "Linting frontend code..."
+	 pnpm -C frontend/job-interview-copilot lint
+	@echo "Frontend code linted successfully."
+
+fe-lint-fix:
+	@echo "Fixing frontend lint issues..."
+	 pnpm -C frontend/job-interview-copilot lint --fix
+	@echo "Frontend lint issues fixed."
