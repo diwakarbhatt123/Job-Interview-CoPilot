@@ -1,0 +1,56 @@
+name: Frontend CI
+
+on:
+  pull_request:
+    paths:
+      - "frontend/job-interview-copilot/**"
+  push:
+    branches: [ "main" ]
+    paths:
+      - "frontend/job-interview-copilot/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fe-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fe-ci:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend/job-interview-copilot
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: frontend/job-interview-copilot/pnpm-lock.yaml
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "9"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
