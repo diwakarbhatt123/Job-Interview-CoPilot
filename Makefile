@@ -34,6 +34,9 @@ build-auth-core:
 	./gradlew -p shared/libs/auth-core build test
 	@echo "Auth Core library built successfully."
 
+build-all: build-account build-fit build-analyzer build-plan build-profile build-auth-core
+	@echo "All services built successfully."
+
 bootrun-account:
 	@echo "Running Account Service..."
 	./gradlew -p services/account-service bootRun
