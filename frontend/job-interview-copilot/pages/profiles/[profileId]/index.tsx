@@ -1,6 +1,6 @@
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router'
 
 export default function ProfileDashboard() {
-  const router = useRouter();
-  return <div>Profile {router.query.profileId} Dashboard Page</div>;
+  const router = useRouter()
+  return <div>Profile {router.query.profileId} Dashboard Page</div>
 }

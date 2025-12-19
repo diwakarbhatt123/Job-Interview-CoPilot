@@ -1,21 +1,17 @@
-import { ReactNode } from 'react';
+import { ReactNode } from 'react'
 
 type LayoutProps = {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <header className="border-b p-4">
-        <h1 className="text-lg font-semibold">
-          Job & Interview Copilot
-        </h1>
+        <h1 className="text-lg font-semibold">Job & Interview Copilot</h1>
       </header>
 
-      <main className="flex-1 p-4">
-        {children}
-      </main>
+      <main className="flex-1 p-4">{children}</main>
     </div>
-  );
+  )
 }
