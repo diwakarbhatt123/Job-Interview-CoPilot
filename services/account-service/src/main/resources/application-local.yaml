@@ -3,3 +3,11 @@ spring:
     url: jdbc:postgresql://localhost:5432/account_service
     username: account_user
     password: secure_password
+
+auth:
+  jwt:
+    privateKeyPath: /Users/diwakarbhatt/Projects/Job&InteviewCoPilot/secrets
+    privateKeyAlias: jwt-signing-key
+    privateKeyPassword: changeit
+    issuer: account-service
+    expirationSeconds: 3600

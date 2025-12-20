@@ -12,7 +12,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test")
 class UserRegistrationServiceTest {
 
   @Test

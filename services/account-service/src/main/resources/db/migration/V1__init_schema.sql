@@ -1,6 +1,7 @@
 CREATE TABLE users
 (
   id            SERIAL PRIMARY KEY,
+  user_id       UUID UNIQUE              NOT NULL,
   email         VARCHAR(100) UNIQUE      NOT NULL,
   password_hash VARCHAR(255)             NOT NULL,
   active        BOOLEAN     DEFAULT TRUE NOT NULL,
