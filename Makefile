@@ -1,37 +1,37 @@
 .PHONY: \
 	build-account build-fit build-analyzer build-plan build-profile build-auth-core build-all \
 	bootrun-account bootrun-fit bootrun-analyzer bootrun-plan bootrun-profile bootrun-all \
-	lint-fix-account lint-fix-profile lint-fix-analyzer lint-fix-fit lint-fix-plan lint-fix-all \
+	lint-fix-account lint-fix-profile lint-fix-analyzer lint-fix-fit lint-fix-plan lint-fix-auth-core lint-fix-all \
 	nginx-up nginx-down run-all
 
 build-account:
 	@echo "Building Account Service..."
-	./gradlew -p services/account-service build test
+	./gradlew -p services/account-service build
 	@echo "Account service built successfully."
 
 build-fit:
 	@echo "Building Fit Score Service..."
-	./gradlew -p services/fit-score-service build test
+	./gradlew -p services/fit-score-service build
 	@echo "Fit Score service built successfully."
 
 build-analyzer:
 	@echo "Building Job Analyzer Service..."
-	./gradlew -p services/job-analyzer-service build test
+	./gradlew -p services/job-analyzer-service build
 	@echo "Job Analyzer service built successfully."
 
 build-plan:
 	@echo "Building Prep Plan Service..."
-	./gradlew -p services/prep-plan-service build test
+	./gradlew -p services/prep-plan-service build
 	@echo "Prep Plan service built successfully."
 
 build-profile:
 	@echo "Building Profile Service..."
-	./gradlew -p services/profile-service build test
+	./gradlew -p services/profile-service build
 	@echo "Profile service built successfully."
 
 build-auth-core:
 	@echo "Building Auth Core Library..."
-	./gradlew -p shared/libs/auth-core build test
+	./gradlew -p shared/libs/auth-core build
 	@echo "Auth Core library built successfully."
 
 build-all: build-account build-fit build-analyzer build-plan build-profile build-auth-core
@@ -81,37 +81,37 @@ lint-fix-auth-core:
 lint-fix-all: lint-fix-account lint-fix-profile lint-fix-analyzer lint-fix-fit lint-fix-plan lint-fix-auth-core
 
 nginx-up:
-	nginx -c "$(HOME)/Projects/Job&InteviewCoPilot/project/Job-Interview-CoPilot/gateway/nginx.conf"
+	nginx -c "$(CURDIR)/gateway/nginx.conf"
 	@echo "Nginx server started."
 
 nginx-down:
-	nginx -c "$(HOME)/Projects/Job&InteviewCoPilot/project/Job-Interview-CoPilot/gateway/nginx.conf" -s stop
+	nginx -c "$(CURDIR)/gateway/nginx.conf" -s stop
 
-run-all: nginx-up run-all
+run-all: nginx-up bootrun-all
 	@echo "Nginx and all services are running."
 
 ################ Frontend Services ################
 fe-install:
 	@echo "Installing frontend dependencies..."
-	 pnpm -C frontend/job-interview-copilot install
+	pnpm -C frontend/job-interview-copilot install
 	@echo "Frontend dependencies installed."
 
 fe-dev:
 	@echo "Starting frontend development server..."
-	 pnpm -C frontend/job-interview-copilot dev
+	pnpm -C frontend/job-interview-copilot dev
 	@echo "Frontend development server is running."
 
 fe-build:
 	@echo "Building frontend application..."
-	 pnpm -C frontend/job-interview-copilot build
+	pnpm -C frontend/job-interview-copilot build
 	@echo "Frontend application built successfully."
 
 fe-lint:
 	@echo "Linting frontend code..."
-	 pnpm -C frontend/job-interview-copilot lint
+	pnpm -C frontend/job-interview-copilot lint
 	@echo "Frontend code linted successfully."
 
 fe-lint-fix:
 	@echo "Fixing frontend lint issues..."
-	 pnpm -C frontend/job-interview-copilot lint --fix
+	pnpm -C frontend/job-interview-copilot lint --fix
 	@echo "Frontend lint issues fixed."
