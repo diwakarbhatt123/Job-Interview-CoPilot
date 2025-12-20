@@ -28,8 +28,6 @@ class AuthControllerTest {
   void registerUser_returnsCreated_onHappyPath() throws Exception {
     doNothing().when(userRegistrationService).registerUser(any(UserRegistrationRequest.class));
 
-    var request = new UserRegistrationRequest("user@example.com", "password123");
-
     mockMvc
         .perform(
             post("/auth/register")
@@ -46,8 +44,6 @@ class AuthControllerTest {
     doThrow(new UserExistsException("user@example.com"))
         .when(userRegistrationService)
         .registerUser(any(UserRegistrationRequest.class));
-
-    var request = new UserRegistrationRequest("user@example.com", "password123");
 
     mockMvc
         .perform(
