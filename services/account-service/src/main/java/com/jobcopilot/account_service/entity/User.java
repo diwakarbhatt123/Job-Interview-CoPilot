@@ -2,13 +2,13 @@ package com.jobcopilot.account_service.entity;
 
 import jakarta.persistence.*;
 import java.time.Instant;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
 @Builder(toBuilder = true)
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends BaseEntity {
@@ -20,7 +20,7 @@ public class User extends BaseEntity {
   private String email;
 
   @Column(name = "password_hash", nullable = false)
-  private String password;
+  private String passwordHash;
 
   @Column(nullable = false)
   private boolean active;
