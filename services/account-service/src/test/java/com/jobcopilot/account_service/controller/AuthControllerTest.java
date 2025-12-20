@@ -8,21 +8,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.jobcopilot.account_service.exception.UserExistsException;
+import com.jobcopilot.account_service.model.request.UserLoginRequest;
 import com.jobcopilot.account_service.model.request.UserRegistrationRequest;
+import com.jobcopilot.account_service.model.response.LoginResponse;
+import com.jobcopilot.account_service.service.UserLoginService;
 import com.jobcopilot.account_service.service.UserRegistrationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+@ActiveProfiles("test")
 @WebMvcTest(AuthController.class)
 class AuthControllerTest {
 
   @Autowired private MockMvc mockMvc;
 
   @MockitoBean private UserRegistrationService userRegistrationService;
+  @MockitoBean private UserLoginService userLoginService;
 
   @Test
   void registerUser_returnsCreated_onHappyPath() throws Exception {
@@ -62,6 +68,57 @@ class AuthControllerTest {
     mockMvc
         .perform(
             post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {"email":"not-an-email","password":"short"}
+                    """))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.error").exists());
+  }
+
+  @Test
+  void loginUser_returnsOk_withToken_onValidCredentials() throws Exception {
+    org.mockito.Mockito.doReturn(new LoginResponse("jwt-token", "user-id"))
+        .when(userLoginService)
+        .authenticateUser(any(UserLoginRequest.class));
+
+    mockMvc
+        .perform(
+            post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {"email":"user@example.com","password":"password123"}
+                    """))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.token").value("jwt-token"))
+        .andExpect(jsonPath("$.userId").value("user-id"));
+  }
+
+  @Test
+  void loginUser_returnsUnauthorized_onBadCredentials() throws Exception {
+    doThrow(new org.springframework.security.authentication.BadCredentialsException("bad"))
+        .when(userLoginService)
+        .authenticateUser(any(UserLoginRequest.class));
+
+    mockMvc
+        .perform(
+            post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {"email":"user@example.com","password":"password123"}
+                    """))
+        .andExpect(status().isUnauthorized())
+        .andExpect(jsonPath("$.error").value("Invalid email or password"));
+  }
+
+  @Test
+  void loginUser_returnsBadRequest_onInvalidInput() throws Exception {
+    mockMvc
+        .perform(
+            post("/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """

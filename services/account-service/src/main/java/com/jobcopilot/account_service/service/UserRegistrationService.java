@@ -4,6 +4,7 @@ import com.jobcopilot.account_service.entity.User;
 import com.jobcopilot.account_service.exception.UserExistsException;
 import com.jobcopilot.account_service.model.request.UserRegistrationRequest;
 import com.jobcopilot.account_service.repository.UserRepository;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,12 @@ public class UserRegistrationService {
               final String encodedPassword = passwordEncoder.encode(password);
 
               final User newUser =
-                  User.builder().email(email).passwordHash(encodedPassword).active(true).build();
+                  User.builder()
+                      .userId(UUID.randomUUID())
+                      .email(email)
+                      .passwordHash(encodedPassword)
+                      .active(true)
+                      .build();
 
               userRepository.save(newUser);
             });

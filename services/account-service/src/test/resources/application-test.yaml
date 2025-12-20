@@ -10,3 +10,11 @@ spring:
     show-sql: false
   flyway:
     enabled: false
+
+auth:
+  jwt:
+    privateKeyPath: /Users/diwakarbhatt/Projects/Job&InteviewCoPilot/secrets/jwt-keystore.p12
+    privateKeyAlias: jwt-signing-key
+    privateKeyPassword: changeit
+    issuer: account-service
+    expirationSeconds: 3600

@@ -1,8 +1,11 @@
 package com.jobcopilot.account_service.controller;
 
 import com.jobcopilot.account_service.exception.UserExistsException;
+import com.jobcopilot.account_service.model.request.UserLoginRequest;
 import com.jobcopilot.account_service.model.request.UserRegistrationRequest;
 import com.jobcopilot.account_service.model.response.ErrorResponse;
+import com.jobcopilot.account_service.model.response.LoginResponse;
+import com.jobcopilot.account_service.service.UserLoginService;
 import com.jobcopilot.account_service.service.UserRegistrationService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,10 +24,13 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
   private final UserRegistrationService userRegistrationService;
+  private final UserLoginService userLoginService;
 
   @Autowired
-  public AuthController(UserRegistrationService userRegistrationService) {
+  public AuthController(
+      UserRegistrationService userRegistrationService, UserLoginService userLoginService) {
     this.userRegistrationService = userRegistrationService;
+    this.userLoginService = userLoginService;
   }
 
   @PostMapping(
@@ -38,6 +45,17 @@ public class AuthController {
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
+  @PostMapping(
+      path = "/login",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<LoginResponse> loginUser(
+      @RequestBody @Valid UserLoginRequest userLoginRequest) {
+    log.info("Received request to login user with email: {}", userLoginRequest.email());
+    LoginResponse loginResponse = userLoginService.authenticateUser(userLoginRequest);
+    return ResponseEntity.ok(loginResponse);
+  }
+
   @ExceptionHandler(exception = {UserExistsException.class, DataIntegrityViolationException.class})
   public ResponseEntity<ErrorResponse> handleUserExistsException() {
     log.error("User registration failed: User already exists");
@@ -49,6 +67,13 @@ public class AuthController {
   public ResponseEntity<ErrorResponse> handleInvalidRequest(MethodArgumentNotValidException ex) {
     log.error("Invalid registration request: {}", ex.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
+  }
+
+  @ExceptionHandler(BadCredentialsException.class)
+  public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
+    log.error("Authentication failed: {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(new ErrorResponse("Invalid email or password"));
   }
 
   @ExceptionHandler(Exception.class)
