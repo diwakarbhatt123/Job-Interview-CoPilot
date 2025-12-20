@@ -1,7 +1,5 @@
 import com.github.spotbugs.snom.SpotBugsTask
-import org.gradle.api.reporting.SingleFileReport
 import com.diffplug.gradle.spotless.SpotlessTask
-import io.spring.gradle.dependencymanagement.org.apache.maven.model.Build
 
 plugins {
 	java
@@ -35,6 +33,10 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jobcopilot:auth-core:0.0.1-SNAPSHOT")
+    implementation("org.springframework.boot:spring-boot-starter-flyway")
+    implementation("org.flywaydb:flyway-database-postgresql")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.postgresql:postgresql")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 //	developmentOnly("org.springframework.boot:spring-boot-docker-compose")

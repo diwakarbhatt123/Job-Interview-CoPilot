@@ -1,1 +1,9 @@
 services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: account_user
+      POSTGRES_PASSWORD: secure_password
+      POSTGRES_DB: account_service
+    ports:
+      - "5432:5432"
