@@ -30,7 +30,7 @@ enrichment only where it adds measurable value.
 │  ├─ prep-plan-service/     # Spring Boot (skeleton)
 │  └─ profile-service/       # Spring Boot (skeleton)
 ├─ frontend/                 # Next.js app scaffold (placeholder)
-├─ gateway/                  # nginx configs (entry: nginx.conf; extend via conf.d/)
+├─ gateway/                  # nginx configs (auth_request + routing)
 ├─ shared/
 │  ├─ auth/                  # JWT/auth utilities (placeholder)
 │  └─ contracts/             # shared DTO/contracts (placeholder)
@@ -63,7 +63,8 @@ enrichment only where it adds measurable value.
   - Run one: `make bootrun-account` (or fit/analyzer/plan/profile)
   - Lint/format one: `make lint-fix-account` (or fit/analyzer/plan/profile)
   - Lint/format all: `make lint-fix-all`
-  - Extend: add frontend/gateway/infra targets as they come online.
+  - Frontend: `make fe-install`, `make fe-dev`, `make fe-build`, `make fe-lint`
+  - Gateway: `make nginx-up`, `make nginx-down`
 
 ## Local Development Overview
 
@@ -84,7 +85,14 @@ enrichment only where it adds measurable value.
 
 ## Project Status
 
-Early-stage MVP scaffolding: directories, service READMEs, Makefile shortcuts, and ADRs are in place; service code, gateway config, and infra compose files are still placeholders. Rule-based flows are prioritized; LLM enrichment remains optional.
+M1 foundations are in place:
+
+- Account Service schema, registration, login, and JWT issuance.
+- Shared auth-core library (JWT generator/validator).
+- Gateway auth enforcement via Nginx `auth_request`.
+- CI workflows for backend and frontend.
+  Other services remain skeletons. Rule-based flows are prioritized; LLM enrichment remains
+  optional.
 
 ## Explicit Non-Goals
 
