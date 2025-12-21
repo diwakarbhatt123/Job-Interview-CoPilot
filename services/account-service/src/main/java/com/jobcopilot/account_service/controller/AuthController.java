@@ -1,5 +1,6 @@
 package com.jobcopilot.account_service.controller;
 
+import com.jobcopilot.account_service.exception.BadCredentialsException;
 import com.jobcopilot.account_service.exception.UserExistsException;
 import com.jobcopilot.account_service.model.request.UserLoginRequest;
 import com.jobcopilot.account_service.model.request.UserRegistrationRequest;
@@ -16,7 +17,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.*;
