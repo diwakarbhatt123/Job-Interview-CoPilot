@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.jobcopilot.account_service.entity.User;
+import com.jobcopilot.account_service.exception.BadCredentialsException;
 import com.jobcopilot.account_service.model.request.UserLoginRequest;
 import com.jobcopilot.account_service.model.response.LoginResponse;
 import com.jobcopilot.account_service.repository.UserRepository;
@@ -14,7 +15,6 @@ import org.jobcopilot.auth.generator.TokenGenerator;
 import org.jobcopilot.auth.model.ValidatedToken;
 import org.jobcopilot.auth.validator.TokenValidator;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 class UserLoginServiceTest {
