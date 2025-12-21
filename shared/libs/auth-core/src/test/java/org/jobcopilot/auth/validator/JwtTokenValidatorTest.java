@@ -2,7 +2,6 @@ package org.jobcopilot.auth.validator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
@@ -112,7 +111,7 @@ class JwtTokenValidatorTest {
             .signWith(keyPair.getPrivate(), Jwts.SIG.RS512)
             .compact();
 
-    assertThrows(JwtException.class, () -> validator.validateAndDecodeToken(token));
+    assertThrows(InvalidTokenException.class, () -> validator.validateAndDecodeToken(token));
   }
 
   @Test
