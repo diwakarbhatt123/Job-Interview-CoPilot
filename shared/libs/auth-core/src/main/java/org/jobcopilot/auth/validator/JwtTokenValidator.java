@@ -22,9 +22,8 @@ public class JwtTokenValidator implements TokenValidator {
 
   @Override
   public ValidatedToken validateAndDecodeToken(String token) throws InvalidTokenException {
-    requireRs256Header(token);
-
     try {
+      requireRs256Header(token);
       var jwt =
           Jwts.parser()
               .verifyWith(publicKey)
