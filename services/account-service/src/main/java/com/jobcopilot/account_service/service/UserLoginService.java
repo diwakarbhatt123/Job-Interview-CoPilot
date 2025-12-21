@@ -3,6 +3,8 @@ package com.jobcopilot.account_service.service;
 import com.jobcopilot.account_service.model.request.UserLoginRequest;
 import com.jobcopilot.account_service.model.response.LoginResponse;
 import com.jobcopilot.account_service.repository.UserRepository;
+import java.time.Instant;
+import java.util.UUID;
 import org.jobcopilot.auth.generator.TokenGenerator;
 import org.jobcopilot.auth.model.ValidatedToken;
 import org.jobcopilot.auth.validator.TokenValidator;
@@ -11,9 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.util.UUID;
 
 @Service
 public class UserLoginService {

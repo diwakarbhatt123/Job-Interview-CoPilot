@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.PrematureJwtException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -12,6 +11,7 @@ import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import org.jobcopilot.auth.exception.InvalidTokenException;
 import org.jobcopilot.auth.generator.JWTTokenGenerator;
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +51,7 @@ class JwtTokenValidatorTest {
     var validator = new JwtTokenValidator(verifyingKey.getPublic(), "issuer-a");
 
     String token = generator.generateToken("user-123");
-    assertThrows(JwtException.class, () -> validator.validateAndDecodeToken(token));
+    assertThrows(InvalidTokenException.class, () -> validator.validateAndDecodeToken(token));
   }
 
   @Test
@@ -73,7 +73,8 @@ class JwtTokenValidatorTest {
             .encodeToString(tamperedPayloadJson.getBytes(StandardCharsets.UTF_8));
     String tamperedToken = parts[0] + "." + tamperedPayload + "." + parts[2];
 
-    assertThrows(JwtException.class, () -> validator.validateAndDecodeToken(tamperedToken));
+    assertThrows(
+        InvalidTokenException.class, () -> validator.validateAndDecodeToken(tamperedToken));
   }
 
   @Test
@@ -92,7 +93,7 @@ class JwtTokenValidatorTest {
             .signWith(keyPair.getPrivate(), Jwts.SIG.RS256)
             .compact();
 
-    assertThrows(PrematureJwtException.class, () -> validator.validateAndDecodeToken(token));
+    assertThrows(InvalidTokenException.class, () -> validator.validateAndDecodeToken(token));
   }
 
   @Test
