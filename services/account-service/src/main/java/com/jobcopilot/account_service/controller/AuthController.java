@@ -8,7 +8,9 @@ import com.jobcopilot.account_service.model.response.LoginResponse;
 import com.jobcopilot.account_service.service.UserLoginService;
 import com.jobcopilot.account_service.service.UserRegistrationService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
+import org.jobcopilot.auth.exception.InvalidTokenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+  private static final String USER_ID_HEADER = "X-User-Id";
 
   private final UserRegistrationService userRegistrationService;
   private final UserLoginService userLoginService;
@@ -56,6 +59,15 @@ public class AuthController {
     return ResponseEntity.ok(loginResponse);
   }
 
+  @GetMapping(path = "/authenticate")
+  public ResponseEntity<Void> authenticateUser(
+      @RequestHeader("Authorization") @NotBlank String authenticationToken) {
+    log.info("Received request to authenticate user");
+    authenticationToken = authenticationToken.trim().replaceFirst("^Bearer ", "");
+    String userId = userLoginService.authenticateUserToken(authenticationToken);
+    return ResponseEntity.ok().header(USER_ID_HEADER, userId).build();
+  }
+
   @ExceptionHandler(exception = {UserExistsException.class, DataIntegrityViolationException.class})
   public ResponseEntity<ErrorResponse> handleUserExistsException() {
     log.error("User registration failed: User already exists");
@@ -74,6 +86,13 @@ public class AuthController {
     log.error("Authentication failed: {}", ex.getMessage());
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
         .body(new ErrorResponse("Invalid email or password"));
+  }
+
+  @ExceptionHandler(InvalidTokenException.class)
+  public ResponseEntity<ErrorResponse> handleInvalidTokenException(InvalidTokenException ex) {
+    log.error("Authentication token validation failed: {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(new ErrorResponse("Invalid authentication token"));
   }
 
   @ExceptionHandler(Exception.class)

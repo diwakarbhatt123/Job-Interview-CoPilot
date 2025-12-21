@@ -6,7 +6,7 @@ spring:
 
 auth:
   jwt:
-    privateKeyPath: /Users/diwakarbhatt/Projects/Job&InteviewCoPilot/secrets
+    privateKeyPath: /Users/diwakarbhatt/Projects/Job&InteviewCoPilot/secrets/jwt-keystore.p12
     privateKeyAlias: jwt-signing-key
     privateKeyPassword: changeit
     issuer: account-service
