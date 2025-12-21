@@ -5,33 +5,31 @@ import java.security.GeneralSecurityException;
 import org.jobcopilot.auth.config.generator.JWTTokenGeneratorConfig;
 import org.jobcopilot.auth.factory.TokenGeneratorFactory;
 import org.jobcopilot.auth.generator.TokenGenerator;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@EnableConfigurationProperties(TokenConfig.class)
 public class TokenGeneratorConfig {
 
-  @Value("${auth.jwt.privateKeyPath}")
-  private String privateKeyPath;
+  private final TokenConfig tokenConfig;
 
-  @Value("${auth.jwt.privateKeyAlias}")
-  private String privateKeyAlias;
-
-  @Value("${auth.jwt.privateKeyPassword}")
-  private String privateKeyPassword;
-
-  @Value("${auth.jwt.issuer}")
-  private String issuer;
-
-  @Value("${auth.jwt.expirationSeconds}")
-  private long expirationSeconds;
+  @Autowired
+  public TokenGeneratorConfig(TokenConfig tokenConfig) {
+    this.tokenConfig = tokenConfig;
+  }
 
   @Bean
   public TokenGenerator getTokenGenerator() throws GeneralSecurityException, IOException {
     JWTTokenGeneratorConfig config =
         new JWTTokenGeneratorConfig(
-            privateKeyPath, privateKeyAlias, privateKeyPassword, issuer, expirationSeconds);
+            tokenConfig.privateKeyPath(),
+            tokenConfig.privateKeyAlias(),
+            tokenConfig.privateKeyPassword(),
+            tokenConfig.issuer(),
+            tokenConfig.expirationSeconds());
     return TokenGeneratorFactory.createTokenGenerator(config);
   }
 }

@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.jobcopilot.account_service.exception.BadCredentialsException;
 import com.jobcopilot.account_service.exception.UserExistsException;
 import com.jobcopilot.account_service.model.request.UserLoginRequest;
 import com.jobcopilot.account_service.model.request.UserRegistrationRequest;
@@ -98,7 +99,7 @@ class AuthControllerTest {
 
   @Test
   void loginUser_returnsUnauthorized_onBadCredentials() throws Exception {
-    doThrow(new org.springframework.security.authentication.BadCredentialsException("bad"))
+    doThrow(new BadCredentialsException("bad"))
         .when(userLoginService)
         .authenticateUser(any(UserLoginRequest.class));
 

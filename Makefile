@@ -6,32 +6,32 @@
 
 build-account:
 	@echo "Building Account Service..."
-	./gradlew -p services/account-service build
+	./gradlew --configuration-cache -p services/account-service build
 	@echo "Account service built successfully."
 
 build-fit:
 	@echo "Building Fit Score Service..."
-	./gradlew -p services/fit-score-service build
+	./gradlew --configuration-cache -p services/fit-score-service build
 	@echo "Fit Score service built successfully."
 
 build-analyzer:
 	@echo "Building Job Analyzer Service..."
-	./gradlew -p services/job-analyzer-service build
+	./gradlew --configuration-cache -p services/job-analyzer-service build
 	@echo "Job Analyzer service built successfully."
 
 build-plan:
 	@echo "Building Prep Plan Service..."
-	./gradlew -p services/prep-plan-service build
+	./gradlew --configuration-cache -p services/prep-plan-service build
 	@echo "Prep Plan service built successfully."
 
 build-profile:
 	@echo "Building Profile Service..."
-	./gradlew -p services/profile-service build
+	./gradlew --configuration-cache -p services/profile-service build
 	@echo "Profile service built successfully."
 
 build-auth-core:
 	@echo "Building Auth Core Library..."
-	./gradlew -p shared/libs/auth-core build
+	./gradlew --configuration-cache -p shared/libs/auth-core build
 	@echo "Auth Core library built successfully."
 
 build-all: build-account build-fit build-analyzer build-plan build-profile build-auth-core

@@ -1,6 +1,5 @@
 import com.diffplug.gradle.spotless.SpotlessTask
 import com.github.spotbugs.snom.SpotBugsTask
-import org.gradle.api.reporting.SingleFileReport
 
 plugins {
 	java
@@ -35,7 +34,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
-	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
+//	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

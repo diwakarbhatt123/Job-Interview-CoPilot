@@ -2,12 +2,11 @@ package org.jobcopilot.auth;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import org.jobcopilot.auth.exception.InvalidTokenException;
 import org.jobcopilot.auth.generator.JWTTokenGenerator;
 import org.jobcopilot.auth.model.ValidatedToken;
 import org.jobcopilot.auth.validator.JwtTokenValidator;
@@ -44,7 +43,7 @@ class JwtAuthCoreTest {
 
     String token = generator.generateToken("user-123");
 
-    assertThrows(JwtException.class, () -> validator.validateAndDecodeToken(token));
+    assertThrows(InvalidTokenException.class, () -> validator.validateAndDecodeToken(token));
   }
 
   @Test
@@ -56,6 +55,6 @@ class JwtAuthCoreTest {
 
     String token = generator.generateToken("user-123");
 
-    assertThrows(ExpiredJwtException.class, () -> validator.validateAndDecodeToken(token));
+    assertThrows(InvalidTokenException.class, () -> validator.validateAndDecodeToken(token));
   }
 }

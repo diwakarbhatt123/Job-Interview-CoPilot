@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.regex.Pattern;
 import lombok.Data;
+import org.jobcopilot.auth.exception.InvalidTokenException;
 import org.jobcopilot.auth.model.ValidatedToken;
 
 @Data
@@ -20,21 +21,28 @@ public class JwtTokenValidator implements TokenValidator {
   private static final Pattern RS256_ALG_PATTERN = Pattern.compile("\"alg\"\\s*:\\s*\"RS256\"");
 
   @Override
-  public ValidatedToken validateAndDecodeToken(String token) {
-    requireRs256Header(token);
+  public ValidatedToken validateAndDecodeToken(String token) throws InvalidTokenException {
+    try {
+      requireRs256Header(token);
+      var jwt =
+          Jwts.parser()
+              .verifyWith(publicKey)
+              .requireIssuer(issuer)
+              .build()
+              .parseSignedClaims(token);
 
-    var jwt =
-        Jwts.parser().verifyWith(publicKey).requireIssuer(issuer).build().parseSignedClaims(token);
+      var claims = jwt.getPayload();
 
-    var claims = jwt.getPayload();
-
-    return new ValidatedToken(
-        claims.getSubject(),
-        claims.getIssuer(),
-        toInstant(claims.getIssuedAt()),
-        toInstant(claims.getNotBefore()),
-        toInstant(claims.getExpiration()),
-        Map.copyOf(claims));
+      return new ValidatedToken(
+          claims.getSubject(),
+          claims.getIssuer(),
+          toInstant(claims.getIssuedAt()),
+          toInstant(claims.getNotBefore()),
+          toInstant(claims.getExpiration()),
+          Map.copyOf(claims));
+    } catch (JwtException e) {
+      throw new InvalidTokenException("Invalid JWT token", e);
+    }
   }
 
   private Instant toInstant(Date date) {
