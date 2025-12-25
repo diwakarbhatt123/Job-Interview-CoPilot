@@ -1,6 +1,11 @@
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { UnauthorizedError } from '@/error/UnauthorizedError'
 import { apiFetchRaw } from '@/lib/api'
-export default async function handler(req, res) {
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST'])
     return res.status(405).json({ error: 'Method not allowed' })
