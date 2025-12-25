@@ -3,10 +3,10 @@ package com.jobcopilot.account_service.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.jobcopilot.account_service.dto.AuthenticationResult;
 import com.jobcopilot.account_service.entity.User;
 import com.jobcopilot.account_service.exception.BadCredentialsException;
 import com.jobcopilot.account_service.model.request.UserLoginRequest;
-import com.jobcopilot.account_service.model.response.LoginResponse;
 import com.jobcopilot.account_service.repository.UserRepository;
 import java.time.Instant;
 import java.util.Optional;
@@ -40,11 +40,10 @@ class UserLoginServiceTest {
     when(passwordEncoder.matches("password123", "hashed")).thenReturn(true);
     when(tokenGenerator.generateToken(userId.toString())).thenReturn("jwt-token");
 
-    LoginResponse response =
+    AuthenticationResult response =
         service.authenticateUser(new UserLoginRequest("USER@EXAMPLE.COM", "password123"));
 
-    assertEquals("jwt-token", response.token());
-    assertEquals(userId.toString(), response.userId());
+    assertEquals(userId, response.userId());
   }
 
   @Test

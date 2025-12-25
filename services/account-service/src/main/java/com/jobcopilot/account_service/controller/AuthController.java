@@ -1,5 +1,7 @@
 package com.jobcopilot.account_service.controller;
 
+import com.jobcopilot.account_service.config.TokenConfig;
+import com.jobcopilot.account_service.dto.AuthenticationResult;
 import com.jobcopilot.account_service.exception.BadCredentialsException;
 import com.jobcopilot.account_service.exception.UserExistsException;
 import com.jobcopilot.account_service.model.request.UserLoginRequest;
@@ -8,8 +10,9 @@ import com.jobcopilot.account_service.model.response.ErrorResponse;
 import com.jobcopilot.account_service.model.response.LoginResponse;
 import com.jobcopilot.account_service.service.UserLoginService;
 import com.jobcopilot.account_service.service.UserRegistrationService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.jobcopilot.auth.exception.InvalidTokenException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -26,15 +28,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
   private static final String USER_ID_HEADER = "X-User-Id";
+  private static final String AUTH_TOKEN_COOKIE_NAME = "AuthToken";
 
   private final UserRegistrationService userRegistrationService;
   private final UserLoginService userLoginService;
+  private final TokenConfig tokenConfig;
 
   @Autowired
   public AuthController(
-      UserRegistrationService userRegistrationService, UserLoginService userLoginService) {
+      UserRegistrationService userRegistrationService,
+      UserLoginService userLoginService,
+      TokenConfig tokenConfig) {
     this.userRegistrationService = userRegistrationService;
     this.userLoginService = userLoginService;
+    this.tokenConfig = tokenConfig;
   }
 
   @PostMapping(
@@ -54,16 +61,28 @@ public class AuthController {
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<LoginResponse> loginUser(
-      @RequestBody @Valid UserLoginRequest userLoginRequest) {
+      @RequestBody @Valid UserLoginRequest userLoginRequest, HttpServletResponse response) {
     log.info("Received request to login user with email: {}", userLoginRequest.email());
-    LoginResponse loginResponse = userLoginService.authenticateUser(userLoginRequest);
+    AuthenticationResult authenticationResult = userLoginService.authenticateUser(userLoginRequest);
+
+    Cookie cookie = new Cookie(AUTH_TOKEN_COOKIE_NAME, authenticationResult.token());
+    cookie.setHttpOnly(true);
+    cookie.setPath("/");
+    cookie.setMaxAge(Long.valueOf(tokenConfig.expirationSeconds()).intValue());
+    response.addCookie(cookie);
+
+    LoginResponse loginResponse = new LoginResponse(authenticationResult.userId().toString());
+
     return ResponseEntity.ok(loginResponse);
   }
 
   @GetMapping(path = "/authenticate")
   public ResponseEntity<Void> authenticateUser(
-      @RequestHeader("Authorization") @NotBlank String authenticationToken) {
+      @RequestHeader("Authorization") String authenticationToken) {
     log.info("Received request to authenticate user");
+    if (authenticationToken == null || authenticationToken.isBlank()) {
+      throw new BadCredentialsException("Missing or empty Authorization header");
+    }
     authenticationToken = authenticationToken.trim().replaceFirst("^Bearer ", "");
     String userId = userLoginService.authenticateUserToken(authenticationToken);
     return ResponseEntity.ok().header(USER_ID_HEADER, userId).build();
@@ -94,14 +113,6 @@ public class AuthController {
     log.error("Authentication token validation failed: {}", ex.getMessage());
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
         .body(new ErrorResponse("Invalid authentication token"));
-  }
-
-  @ExceptionHandler(MissingRequestHeaderException.class)
-  public ResponseEntity<ErrorResponse> handleMissingHeaderException(
-      MissingRequestHeaderException ex) {
-    log.error("Missing request header: {}", ex.getHeaderName());
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body(new ErrorResponse("Missing required header: " + ex.getHeaderName()));
   }
 
   @ExceptionHandler(Exception.class)

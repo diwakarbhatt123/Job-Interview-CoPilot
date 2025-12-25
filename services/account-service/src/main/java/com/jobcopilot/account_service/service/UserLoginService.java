@@ -1,8 +1,8 @@
 package com.jobcopilot.account_service.service;
 
+import com.jobcopilot.account_service.dto.AuthenticationResult;
 import com.jobcopilot.account_service.exception.BadCredentialsException;
 import com.jobcopilot.account_service.model.request.UserLoginRequest;
-import com.jobcopilot.account_service.model.response.LoginResponse;
 import com.jobcopilot.account_service.repository.UserRepository;
 import java.time.Instant;
 import java.util.UUID;
@@ -38,14 +38,14 @@ public class UserLoginService {
     this.issuer = issuer;
   }
 
-  public LoginResponse authenticateUser(UserLoginRequest userLoginRequest) {
+  public AuthenticationResult authenticateUser(UserLoginRequest userLoginRequest) {
     return userRepository
         .findByEmail(userLoginRequest.email().toLowerCase().trim())
         .map(
             user -> {
               if (passwordEncoder.matches(userLoginRequest.password(), user.getPasswordHash())) {
                 String token = tokenGenerator.generateToken(user.getUserId().toString());
-                return new LoginResponse(token, user.getUserId().toString());
+                return new AuthenticationResult(token, user.getUserId());
               } else {
                 throw new BadCredentialsException("Invalid email or password");
               }
