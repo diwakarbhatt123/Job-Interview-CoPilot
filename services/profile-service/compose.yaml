@@ -1,1 +1,10 @@
 services:
+  mongodb:
+    image: mongo:6.0
+    container_name: profile-service-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: profile_user
+      MONGO_INITDB_ROOT_PASSWORD: secure_password
+      MONGO_INITDB_DATABASE: profile_service
+    ports:
+      - "27017:27017"

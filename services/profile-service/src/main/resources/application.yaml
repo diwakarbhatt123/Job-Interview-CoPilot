@@ -1,9 +1,14 @@
 spring:
   application:
     name: profile-service
+  mongodb:
+    database: profile_service
+    auto-index-creation: true
 
 server:
     port: 8085
+
+
 
 management:
   endpoints:
