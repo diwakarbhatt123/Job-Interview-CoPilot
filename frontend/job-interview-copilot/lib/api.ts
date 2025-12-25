@@ -1,4 +1,4 @@
-import {UnauthorizedError} from "@/error/UnauthorizedError";
+import { UnauthorizedError } from '@/error/UnauthorizedError'
 
 function getBaseUrl(): string {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
