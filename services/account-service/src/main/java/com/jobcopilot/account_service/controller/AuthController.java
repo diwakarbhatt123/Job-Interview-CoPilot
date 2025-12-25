@@ -13,7 +13,6 @@ import com.jobcopilot.account_service.service.UserRegistrationService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.jobcopilot.auth.exception.InvalidTokenException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +77,8 @@ public class AuthController {
   }
 
   @GetMapping(path = "/authenticate")
-  public ResponseEntity<Void> authenticateUser(@RequestHeader("Authorization") String authenticationToken) {
+  public ResponseEntity<Void> authenticateUser(
+      @RequestHeader("Authorization") String authenticationToken) {
     log.info("Received request to authenticate user");
     if (authenticationToken == null || authenticationToken.isBlank()) {
       throw new BadCredentialsException("Missing or empty Authorization header");
@@ -114,7 +114,6 @@ public class AuthController {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
         .body(new ErrorResponse("Invalid authentication token"));
   }
-
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleException(Exception ex) {

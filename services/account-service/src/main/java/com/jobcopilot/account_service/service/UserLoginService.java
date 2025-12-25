@@ -3,7 +3,6 @@ package com.jobcopilot.account_service.service;
 import com.jobcopilot.account_service.dto.AuthenticationResult;
 import com.jobcopilot.account_service.exception.BadCredentialsException;
 import com.jobcopilot.account_service.model.request.UserLoginRequest;
-import com.jobcopilot.account_service.model.response.LoginResponse;
 import com.jobcopilot.account_service.repository.UserRepository;
 import java.time.Instant;
 import java.util.UUID;
