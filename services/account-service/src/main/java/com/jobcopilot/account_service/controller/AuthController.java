@@ -11,8 +11,10 @@ import com.jobcopilot.account_service.model.response.LoginResponse;
 import com.jobcopilot.account_service.service.UserLoginService;
 import com.jobcopilot.account_service.service.UserRegistrationService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.jobcopilot.auth.exception.InvalidTokenException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +80,7 @@ public class AuthController {
 
   @GetMapping(path = "/authenticate")
   public ResponseEntity<Void> authenticateUser(
-      @RequestHeader("Authorization") String authenticationToken) {
+      @RequestHeader(name = "Authorization", required = false) String authenticationToken) {
     log.info("Received request to authenticate user");
     if (authenticationToken == null || authenticationToken.isBlank()) {
       throw new BadCredentialsException("Missing or empty Authorization header");
@@ -102,8 +104,21 @@ public class AuthController {
   }
 
   @ExceptionHandler(BadCredentialsException.class)
-  public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
+  public ResponseEntity<ErrorResponse> handleBadCredentialsException(
+      BadCredentialsException ex, HttpServletRequest request, HttpServletResponse response) {
     log.error("Authentication failed: {}", ex.getMessage());
+
+    if (request.getCookies() != null) {
+      Arrays.stream(request.getCookies())
+          .filter(cookie -> cookie.getName().equals(AUTH_TOKEN_COOKIE_NAME))
+          .findFirst()
+          .ifPresent(
+              cookie -> {
+                cookie.setMaxAge(0);
+                response.addCookie(cookie);
+              });
+    }
+
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
         .body(new ErrorResponse("Invalid email or password"));
   }
