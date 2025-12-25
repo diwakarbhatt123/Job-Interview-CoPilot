@@ -1,0 +1,6 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/profile_service
+      username: profile_user
+      password: secure_password

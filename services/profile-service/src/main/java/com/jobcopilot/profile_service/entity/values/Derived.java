@@ -1,0 +1,12 @@
+package com.jobcopilot.profile_service.entity.values;
+
+import com.jobcopilot.profile_service.enums.Domain;
+import com.jobcopilot.profile_service.enums.ExperienceLevel;
+import java.util.List;
+
+public record Derived(
+    ExperienceLevel experienceLevel, Domain domain, List<String> skillsNormalized) {
+  public Derived {
+    skillsNormalized = List.copyOf(skillsNormalized);
+  }
+}
