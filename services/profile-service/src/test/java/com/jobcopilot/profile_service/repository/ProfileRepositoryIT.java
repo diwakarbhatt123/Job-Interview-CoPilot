@@ -73,7 +73,7 @@ class ProfileRepositoryIT {
   void clearCollection() {
     repository.deleteAll();
     IndexOperations indexOps = mongoTemplate.indexOps(Profile.class);
-    indexOps.ensureIndex(
+    indexOps.createIndex(
         new Index()
             .on("userId", Sort.Direction.ASC)
             .on("displayName", Sort.Direction.ASC)
