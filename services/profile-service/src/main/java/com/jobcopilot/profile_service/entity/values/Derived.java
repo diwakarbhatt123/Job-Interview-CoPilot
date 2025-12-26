@@ -3,7 +3,9 @@ package com.jobcopilot.profile_service.entity.values;
 import com.jobcopilot.profile_service.enums.Domain;
 import com.jobcopilot.profile_service.enums.ExperienceLevel;
 import java.util.List;
+import lombok.Builder;
 
+@Builder(toBuilder = true)
 public record Derived(
     ExperienceLevel experienceLevel, Domain domain, List<String> skillsNormalized) {
   public Derived {

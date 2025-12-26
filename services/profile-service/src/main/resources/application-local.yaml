@@ -1,6 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/profile_service
+      uri: mongodb://profile_user:secure_password@localhost:27017/profile_service?authSource=admin
       username: profile_user
       password: secure_password
+      database: profile_service

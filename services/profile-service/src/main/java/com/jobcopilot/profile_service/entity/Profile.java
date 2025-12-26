@@ -2,6 +2,8 @@ package com.jobcopilot.profile_service.entity;
 
 import com.jobcopilot.profile_service.entity.values.Derived;
 import com.jobcopilot.profile_service.entity.values.Resume;
+import com.jobcopilot.profile_service.enums.ProfileStatus;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
@@ -11,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Builder(toBuilder = true)
 @Document(collection = "profiles")
 @CompoundIndex(
     name = "userId_displayName_idx",
@@ -24,6 +27,8 @@ public class Profile extends BaseEntity {
   private String userId;
 
   private String displayName;
+
+  private ProfileStatus status;
 
   private Resume resume;
 

@@ -1,7 +1,9 @@
 package com.jobcopilot.profile_service.entity.values;
 
 import java.util.List;
+import lombok.Builder;
 
+@Builder(toBuilder = true)
 public record Parsed(
     List<String> skills,
     Integer yearsOfExperience,

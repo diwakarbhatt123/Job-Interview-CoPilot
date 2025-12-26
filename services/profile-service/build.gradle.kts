@@ -34,13 +34,16 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jobcopilot:auth-core:0.0.1-SNAPSHOT")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:4.0.1")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 //	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-webmvc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
+    testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.12.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
