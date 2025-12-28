@@ -10,7 +10,6 @@ import com.jobcopilot.profile_service.service.ProfileService;
 import com.mongodb.DuplicateKeyException;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,9 +32,10 @@ public class ProfileController {
   @GetMapping("/all")
   public ResponseEntity<ProfilesResponse> allProfiles(@RequestHeader("X-User-Id") String userId) {
     log.info("Received request to get all profiles for userId: {}", userId);
+
+    List<ProfileSummaryResponse> profileSummaryResponses = profileService.getProfiles(userId);
     return ResponseEntity.ok(
-        new ProfilesResponse(
-            List.of(new ProfileSummaryResponse(UUID.randomUUID(), "random", "random")), 1));
+        new ProfilesResponse(profileSummaryResponses, profileSummaryResponses.size()));
   }
 
   @PostMapping
