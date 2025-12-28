@@ -101,6 +101,9 @@ public class TextNormalizer implements PipelineStage {
     if (prev.isEmpty() || nxt.isEmpty()) {
       return false;
     }
+    if (ParsingUtils.isLikelyHeader(prev)) {
+      return false;
+    }
     if (endsWithPunctuation(prev)) {
       return false;
     }

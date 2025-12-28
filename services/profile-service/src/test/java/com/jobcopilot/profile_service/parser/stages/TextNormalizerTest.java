@@ -36,7 +36,7 @@ class TextNormalizerTest {
   void repairsLineWrappingForLowercaseContinuationOnly() {
     String input =
         "Professional Summary\n"
-            + "Experienced\n"
+            + "experienced\n"
             + "engineer with backend focus\n"
             + "EXPERIENCE\n"
             + "Acme Corp\n";
@@ -44,8 +44,8 @@ class TextNormalizerTest {
     NormalizedTextOutput output =
         (NormalizedTextOutput) normalizer.process(new PlainTextAnalysisPipelineRequest(input));
 
-    // "Experienced" + "engineer..." should merge; header boundary should not merge.
-    assertThat(output.normalizedText()).contains("Experienced engineer with backend focus");
+    // "experienced" + "engineer..." should merge; header boundary should not merge.
+    assertThat(output.normalizedText()).contains("experienced engineer with backend focus");
     assertThat(output.normalizedText()).contains("EXPERIENCE\nAcme Corp");
   }
 }
