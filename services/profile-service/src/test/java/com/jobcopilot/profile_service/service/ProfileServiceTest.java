@@ -102,91 +102,19 @@ class ProfileServiceTest {
     assertThat(responses.get(0).summary().skills()).containsExactly(Skill.JAVA);
   }
 
-  private static final class TestProfileSummaryView implements ProfileSummaryView {
-    private final String id;
-    private final String displayName;
-    private final ProfileStatus status;
-    private final Instant createdAt;
-    private final Instant updatedAt;
-    private final Derived derived;
-    private final ResumeView resume;
+  private record TestProfileSummaryView(
+      String id,
+      String displayName,
+      ProfileStatus status,
+      Instant createdAt,
+      Instant updatedAt,
+      Derived derived,
+      ResumeView resume)
+      implements ProfileSummaryView {}
 
-    private TestProfileSummaryView(
-        String id,
-        String displayName,
-        ProfileStatus status,
-        Instant createdAt,
-        Instant updatedAt,
-        Derived derived,
-        ResumeView resume) {
-      this.id = id;
-      this.displayName = displayName;
-      this.status = status;
-      this.createdAt = createdAt;
-      this.updatedAt = updatedAt;
-      this.derived = derived;
-      this.resume = resume;
-    }
+  private record TestResumeView(ProfileSummaryView.ParsedView parsed)
+      implements ProfileSummaryView.ResumeView {}
 
-    @Override
-    public String getId() {
-      return id;
-    }
-
-    @Override
-    public String getDisplayName() {
-      return displayName;
-    }
-
-    @Override
-    public ProfileStatus getStatus() {
-      return status;
-    }
-
-    @Override
-    public Instant getCreatedAt() {
-      return createdAt;
-    }
-
-    @Override
-    public Instant getUpdatedAt() {
-      return updatedAt;
-    }
-
-    @Override
-    public Derived getDerived() {
-      return derived;
-    }
-
-    @Override
-    public ResumeView getResume() {
-      return resume;
-    }
-  }
-
-  private static final class TestResumeView implements ProfileSummaryView.ResumeView {
-    private final ProfileSummaryView.ParsedView parsed;
-
-    private TestResumeView(ProfileSummaryView.ParsedView parsed) {
-      this.parsed = parsed;
-    }
-
-    @Override
-    public ProfileSummaryView.ParsedView getParsed() {
-      return parsed;
-    }
-  }
-
-  private static final class TestParsedView implements ProfileSummaryView.ParsedView {
-    private final Integer yearsOfExperience;
-
-    private TestParsedView(Integer yearsOfExperience) {
-      this.yearsOfExperience = yearsOfExperience;
-    }
-
-    @Override
-    public Integer getYearsOfExperience() {
-      return yearsOfExperience;
-    }
-  }
+  private record TestParsedView(Integer yearsOfExperience)
+      implements ProfileSummaryView.ParsedView {}
 }

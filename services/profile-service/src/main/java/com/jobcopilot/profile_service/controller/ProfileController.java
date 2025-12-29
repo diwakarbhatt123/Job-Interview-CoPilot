@@ -43,9 +43,10 @@ public class ProfileController {
       @RequestBody @Valid CreateProfileRequest createProfileRequest,
       @RequestHeader("X-User-Id") String userId) {
     log.info(
-        "Received request to create profile for userId: {} with displayName: {}",
+        "Received request to create profile for userId: {} with displayName: {} and pasted cv {}",
         userId,
-        createProfileRequest.displayName());
+        createProfileRequest.displayName(),
+        createProfileRequest.pastedCV());
     ProfileStatusResponse profileStatusResponse =
         profileService.createProfile(createProfileRequest, userId);
     return ResponseEntity.status(HttpStatus.CREATED).body(profileStatusResponse);

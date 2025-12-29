@@ -12,6 +12,7 @@ import com.jobcopilot.profile_service.repository.ProfileSummaryView;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProfileService {
   private final ProfileRepository profileRepository;
+  private final ResumeParsingService resumeParsingService;
+  private final ExecutorService executorService;
 
   @Autowired
-  public ProfileService(ProfileRepository profileRepository) {
+  public ProfileService(
+      ProfileRepository profileRepository,
+      ResumeParsingService resumeParsingService,
+      ExecutorService executorService) {
     this.profileRepository = profileRepository;
+    this.resumeParsingService = resumeParsingService;
+    this.executorService = executorService;
   }
 
   public ProfileStatusResponse createProfile(
@@ -41,6 +49,7 @@ public class ProfileService {
             .build();
 
     Profile savedProfile = profileRepository.save(newProfile);
+    executorService.submit(() -> resumeParsingService.parseResume(createProfileRequest, userId));
     return new ProfileStatusResponse(savedProfile.getId(), savedProfile.getStatus());
   }
 
@@ -54,22 +63,22 @@ public class ProfileService {
   }
 
   private ProfileSummaryResponse toProfileSummary(ProfileSummaryView profile) {
-    Optional<Derived> derived = Optional.ofNullable(profile.getDerived());
+    Optional<Derived> derived = Optional.ofNullable(profile.derived());
     return ProfileSummaryResponse.builder()
-        .id(profile.getId())
-        .status(profile.getStatus())
-        .created(profile.getCreatedAt())
-        .updated(profile.getUpdatedAt())
-        .displayName(profile.getDisplayName())
+        .id(profile.id())
+        .status(profile.status())
+        .created(profile.createdAt())
+        .updated(profile.updatedAt())
+        .displayName(profile.displayName())
         .summary(
             ProfileSummaryResponse.Summary.builder()
                 .domain(derived.map(Derived::domain).orElse(null))
                 .skills(derived.map(Derived::skillsNormalized).orElse(List.of()))
                 .experienceLevel(derived.map(Derived::experienceLevel).orElse(null))
                 .yearsOfExperience(
-                    Optional.ofNullable(profile.getResume())
-                        .map(ProfileSummaryView.ResumeView::getParsed)
-                        .map(ProfileSummaryView.ParsedView::getYearsOfExperience)
+                    Optional.ofNullable(profile.resume())
+                        .map(ProfileSummaryView.ResumeView::parsed)
+                        .map(ProfileSummaryView.ParsedView::yearsOfExperience)
                         .orElse(null))
                 .build())
         .build();
