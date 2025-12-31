@@ -10,6 +10,8 @@ import com.jobcopilot.profile_service.model.response.ProfilesResponse;
 import com.jobcopilot.profile_service.service.ProfileService;
 import com.mongodb.DuplicateKeyException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @RestController
 @RequestMapping("/profile")
+@Validated
 public class ProfileController {
 
   private final ProfileService profileService;
@@ -58,8 +62,8 @@ public class ProfileController {
 
   @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<?> createProfileWithUpload(
-      @RequestParam("displayName") String displayName,
-      @RequestParam("sourceType") SourceType sourceType,
+      @RequestParam("displayName") @NotBlank String displayName,
+      @RequestParam("sourceType") @NotNull SourceType sourceType,
       @RequestParam("resume") MultipartFile resume,
       @RequestHeader("X-User-Id") String userId)
       throws IOException {
