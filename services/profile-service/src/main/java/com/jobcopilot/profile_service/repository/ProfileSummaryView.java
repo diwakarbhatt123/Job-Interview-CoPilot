@@ -5,25 +5,25 @@ import com.jobcopilot.profile_service.enums.ProfileStatus;
 import java.time.Instant;
 
 public interface ProfileSummaryView {
-  String id();
+  String getId();
 
-  String displayName();
+  String getDisplayName();
 
-  ProfileStatus status();
+  ProfileStatus getStatus();
 
-  Instant createdAt();
+  Instant getCreatedAt();
 
-  Instant updatedAt();
+  Instant getUpdatedAt();
 
-  Derived derived();
+  Derived getDerived();
 
-  ResumeView resume();
+  ResumeView getResume();
 
   interface ResumeView {
-    ParsedView parsed();
+    ParsedView getParsed();
   }
 
   interface ParsedView {
-    Integer yearsOfExperience();
+    Integer getYearsOfExperience();
   }
 }

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.jobcopilot.profile_service.entity.Profile;
 import com.jobcopilot.profile_service.entity.values.Derived;
 import com.jobcopilot.profile_service.enums.ProfileStatus;
+import com.jobcopilot.profile_service.enums.SourceType;
 import com.jobcopilot.profile_service.exception.ProfileAlreadyExistsException;
 import com.jobcopilot.profile_service.model.request.CreateProfileRequest;
 import com.jobcopilot.profile_service.model.response.ProfileStatusResponse;
@@ -32,7 +33,7 @@ class ProfileServiceTest {
 
   @Test
   void createProfileSucceeds() {
-    CreateProfileRequest request = new CreateProfileRequest("Primary");
+    CreateProfileRequest request = new CreateProfileRequest("Primary", "resume text", SourceType.PASTED);
     when(profileRepository.existsByUserIdAndDisplayName("user-1", "Primary")).thenReturn(false);
     when(profileRepository.save(any(Profile.class)))
         .thenAnswer(
@@ -50,7 +51,7 @@ class ProfileServiceTest {
 
   @Test
   void createProfileRejectsDuplicateDisplayName() {
-    CreateProfileRequest request = new CreateProfileRequest("Primary");
+    CreateProfileRequest request = new CreateProfileRequest("Primary", "resume text", SourceType.PASTED);
     when(profileRepository.existsByUserIdAndDisplayName("user-1", "Primary")).thenReturn(true);
 
     assertThatThrownBy(() -> profileService.createProfile(request, "user-1"))

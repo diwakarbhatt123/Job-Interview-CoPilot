@@ -7,8 +7,36 @@ export default function NewProfile() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [mode, setMode] = useState<"paste" | "upload">("paste");
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const maxUploadBytes = 5 * 1024 * 1024;
   const pasteRef = useRef<HTMLTextAreaElement | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.type !== 'application/pdf') {
+        setError('Only PDF files are supported.')
+        setUploadedFile(null);
+        if (fileRef.current) {
+          fileRef.current.value = "";
+          fileRef.current.focus();
+        }
+        return
+      }
+      if (file.size > maxUploadBytes) {
+        setError('File size must be 5 MB or less.')
+        setUploadedFile(null);
+        if (fileRef.current) {
+          fileRef.current.value = "";
+          fileRef.current.focus();
+        }
+        return
+      }
+      setUploadedFile(file);
+    }
+  }
+
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -19,7 +47,7 @@ export default function NewProfile() {
       const formData = new FormData(event.currentTarget)
       const displayName = String(formData.get('displayName') || '').trim()
       const pastedCV = String(formData.get('cvPaste') || '').trim()
-      const file = formData.get('cvFile') as File | null
+      const file = mode === 'upload' ? (uploadedFile ?? (formData.get('cvFile') as File | null)) : null
 
       if (!displayName) {
         setError('Display name is required.')
@@ -37,24 +65,34 @@ export default function NewProfile() {
         setError('Only PDF files are supported.')
         return
       }
-      if (mode === 'upload') {
-        setError('Upload is not supported yet. Please paste your CV.')
-        return
-      }
 
-      const body = JSON.stringify({
-        'displayName': displayName,
-        'pastedCV': pastedCV,
-      });
+      const response = await (async () => {
+        if (mode === 'paste') {
+          const body = JSON.stringify({
+            'displayName': displayName,
+            'pastedCV': pastedCV,
+            'sourceType': "PASTED",
+          })
+          return fetch("/api/profile/new", {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: body
+          })
+        }
 
-
-      const response = await fetch("/api/profile/new", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: body
-      })
+        const form = new FormData()
+        form.append('displayName', displayName)
+        form.append('sourceType', 'UPLOADED')
+        if (file) {
+          form.append('resume', file)
+        }
+        return fetch("/api/profile/upload", {
+          method: "POST",
+          body: form,
+        })
+      })()
 
       if (response.ok) {
         const res = await response.json()
@@ -134,6 +172,9 @@ export default function NewProfile() {
                   <option value="paste">Paste CV</option>
                   <option value="upload">Upload CV</option>
                 </select>
+                <p className="mt-2 text-xs text-gray-500">
+                  {mode === "paste" ? "Paste mode selected" : "Upload mode selected"}
+                </p>
               </div>
               <ul
                 className="relative hidden sm:flex rounded-md bg-gray-200 text-sm font-medium overflow-hidden">
@@ -151,6 +192,7 @@ export default function NewProfile() {
                     onClick={() => {
                       setMode("paste")
                       if (fileRef.current) fileRef.current.value = ""
+                      setUploadedFile(null);
                     }}
                     className={`w-full px-4 py-2.5 transition-colors duration-300 ${
                       mode === "paste" ? "text-white" : "text-black"
@@ -198,44 +240,114 @@ export default function NewProfile() {
                   </div>
 
                   {/* Upload CV panel */}
+                  {/* Upload CV panel */}
                   <div className="w-1/2 pl-2">
-                    <div className="flex w-full items-center justify-center">
-                      <label
-                        htmlFor="dropzone-file"
-                        className="flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-base border border-dashed border-default-strong bg-neutral-secondary-medium text-body hover:bg-neutral-tertiary-medium"
-                      >
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                          <svg
-                            className="mb-4 h-8 w-8"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
+                    <div className="flex w-full flex-col gap-3">
+                      {/* EMPTY STATE: big dropzone */}
+                      {!uploadedFile && (
+                        <label
+                          htmlFor="dropzone-file"
+                          className="
+          flex min-h-55 w-full flex-col items-center justify-center gap-3
+          rounded-xl border border-dashed border-gray-300 bg-gray-50
+          px-6 py-8 text-center transition hover:bg-gray-100
+        "
+                        >
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
+                            <svg
+                              className="h-6 w-6 text-gray-500"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
                               stroke="currentColor"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M15 17h3a3 3 0 0 0 0-6h-.025a5.56 5.56 0 0 0 .025-.5A5.5 5.5 0 0 0 7.207 9.021C7.137 9.017 7.071 9 7 9a4 4 0 1 0 0 8h2.167M12 19v-9m0 0-2 2m2-2 2 2"
-                            />
-                          </svg>
-                          <p className="mb-2 text-sm">
-                            <span className="font-semibold">Click to upload</span> or drag and drop
-                          </p>
-                          <p className="text-xs">PDF (max 5 MB)</p>
+                              strokeWidth="1.8"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M16 8l-4-4m0 0L8 8m4-4v12"
+                              />
+                            </svg>
+                          </div>
+
+                          <div className="space-y-1">
+                            <p className="text-sm">
+                              <span className="font-medium text-gray-900">Click to upload</span>{" "}
+                              <span className="text-gray-500">or drag and drop</span>
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              PDF only • up to 5 MB
+                            </p>
+                          </div>
+                        </label>
+                      )}
+
+                      {/* UPLOADED STATE: compact card */}
+                      {uploadedFile && (
+                        <div className="flex w-full flex-col gap-2 rounded-xl border border-green-200 bg-green-50/60 px-4 py-3">
+                          <div className="flex items-start gap-3">
+                            <div className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-white">
+                              <svg
+                                className="h-4 w-4 text-green-600"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            </div>
+                            <div className="flex-1">
+                              <p className="truncate text-sm font-medium text-gray-900">
+                                {uploadedFile.name}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {(uploadedFile.size / 1024).toFixed(1)} KB · Uploaded
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-3 pl-9">
+                            <button
+                              type="button"
+                              className="text-xs font-medium text-gray-700 underline-offset-2 hover:underline"
+                              onClick={() => {
+                                fileRef.current?.click(); // reopen picker
+                              }}
+                            >
+                              Change file
+                            </button>
+                            <button
+                              type="button"
+                              className="text-xs font-medium text-red-600 underline-offset-2 hover:underline"
+                              onClick={() => {
+                                setUploadedFile(null);
+                                if (fileRef.current) {
+                                  fileRef.current.value = "";
+                                }
+                              }}
+                            >
+                              Remove file
+                            </button>
+                          </div>
                         </div>
-                        <input
-                          id="dropzone-file"
-                          name="cvFile"
-                          type="file"
-                          ref={fileRef}
-                          className="hidden"
-                          accept="application/pdf"
-                        />
-                      </label>
+                      )}
+
+                      {/* Hidden input shared by both states */}
+                      <input
+                        id="dropzone-file"
+                        name="cvFile"
+                        type="file"
+                        className="hidden"
+                        ref={fileRef}
+                        onChange={handleFileChange}
+                        accept=".pdf,application/pdf"
+                      />
                     </div>
                   </div>
                 </div>

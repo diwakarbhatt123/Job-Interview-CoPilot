@@ -3,6 +3,7 @@ package com.jobcopilot.profile_service.service;
 import com.jobcopilot.profile_service.entity.Profile;
 import com.jobcopilot.profile_service.entity.values.Derived;
 import com.jobcopilot.profile_service.enums.ProfileStatus;
+import com.jobcopilot.profile_service.enums.SourceType;
 import com.jobcopilot.profile_service.exception.ProfileAlreadyExistsException;
 import com.jobcopilot.profile_service.model.request.CreateProfileRequest;
 import com.jobcopilot.profile_service.model.response.ProfileStatusResponse;
@@ -16,6 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ProfileService {
@@ -53,6 +55,25 @@ public class ProfileService {
     return new ProfileStatusResponse(savedProfile.getId(), savedProfile.getStatus());
   }
 
+  public ProfileStatusResponse createProfileFromUpload(
+      String displayName, MultipartFile resume, SourceType sourceType, String userId) {
+    if (profileRepository.existsByUserIdAndDisplayName(userId, displayName)) {
+      throw new ProfileAlreadyExistsException(displayName);
+    }
+
+    Profile newProfile =
+        Profile.builder()
+            .userId(userId)
+            .displayName(displayName)
+            .status(ProfileStatus.CREATED)
+            .build();
+
+    Profile savedProfile = profileRepository.save(newProfile);
+    executorService.submit(
+        () -> resumeParsingService.parseResumeUpload(resume, sourceType, userId));
+    return new ProfileStatusResponse(savedProfile.getId(), savedProfile.getStatus());
+  }
+
   public List<ProfileSummaryResponse> getProfiles(String userId) {
     return profileRepository.findSummariesByUserId(userId).stream()
         .map(this::toProfileSummary)
@@ -63,22 +84,22 @@ public class ProfileService {
   }
 
   private ProfileSummaryResponse toProfileSummary(ProfileSummaryView profile) {
-    Optional<Derived> derived = Optional.ofNullable(profile.derived());
+    Optional<Derived> derived = Optional.ofNullable(profile.getDerived());
     return ProfileSummaryResponse.builder()
-        .id(profile.id())
-        .status(profile.status())
-        .created(profile.createdAt())
-        .updated(profile.updatedAt())
-        .displayName(profile.displayName())
+        .id(profile.getId())
+        .status(profile.getStatus())
+        .created(profile.getCreatedAt())
+        .updated(profile.getUpdatedAt())
+        .displayName(profile.getDisplayName())
         .summary(
             ProfileSummaryResponse.Summary.builder()
                 .domain(derived.map(Derived::domain).orElse(null))
                 .skills(derived.map(Derived::skillsNormalized).orElse(List.of()))
                 .experienceLevel(derived.map(Derived::experienceLevel).orElse(null))
                 .yearsOfExperience(
-                    Optional.ofNullable(profile.resume())
-                        .map(ProfileSummaryView.ResumeView::parsed)
-                        .map(ProfileSummaryView.ParsedView::yearsOfExperience)
+                    Optional.ofNullable(profile.getResume())
+                        .map(ProfileSummaryView.ResumeView::getParsed)
+                        .map(ProfileSummaryView.ParsedView::getYearsOfExperience)
                         .orElse(null))
                 .build())
         .build();

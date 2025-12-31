@@ -55,14 +55,26 @@ export async function apiFetchRaw(
 ): Promise<Response> {
   const baseUrl = getBaseUrl()
   const url = `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`
+  const isFormData =
+    typeof FormData !== 'undefined' && options.body instanceof FormData
+
+  if (!options.headers) {
+    options.headers = {}
+  }
+  if (!isFormData && !options.headers['Content-Type']) {
+    options.headers = { ...options.headers, 'Content-Type': 'application/json' }
+  }
 
   return fetch(url, {
     method: options.method ?? 'GET',
     credentials: 'include',
     headers: {
-      'Content-Type': 'application/json',
       ...options.headers,
     },
-    body: options.body ? JSON.stringify(options.body) : undefined,
+    body: options.body
+      ? isFormData
+        ? (options.body as FormData)
+        : JSON.stringify(options.body)
+      : undefined,
   })
 }

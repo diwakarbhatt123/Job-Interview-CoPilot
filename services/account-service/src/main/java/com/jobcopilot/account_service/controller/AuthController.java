@@ -87,26 +87,27 @@ public class AuthController {
     }
     authenticationToken = authenticationToken.trim().replaceFirst("^Bearer ", "");
     String userId = userLoginService.authenticateUserToken(authenticationToken);
+    log.info("Authenticated user {}", userId);
     return ResponseEntity.ok().header(USER_ID_HEADER, userId).build();
   }
 
   @ExceptionHandler(exception = {UserExistsException.class, DataIntegrityViolationException.class})
-  public ResponseEntity<ErrorResponse> handleUserExistsException() {
-    log.error("User registration failed: User already exists");
+  public ResponseEntity<ErrorResponse> handleUserExistsException(Exception ex) {
+    log.error("User registration failed: User already exists", ex);
     return ResponseEntity.status(HttpStatus.CONFLICT)
         .body(new ErrorResponse("User already exists"));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleInvalidRequest(MethodArgumentNotValidException ex) {
-    log.error("Invalid registration request: {}", ex.getMessage());
+    log.error("Invalid registration request: {}", ex.getMessage(), ex);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
   }
 
   @ExceptionHandler(BadCredentialsException.class)
   public ResponseEntity<ErrorResponse> handleBadCredentialsException(
       BadCredentialsException ex, HttpServletRequest request, HttpServletResponse response) {
-    log.error("Authentication failed: {}", ex.getMessage());
+    log.error("Authentication failed: {}", ex.getMessage(), ex);
 
     if (request.getCookies() != null) {
       Arrays.stream(request.getCookies())
@@ -125,14 +126,14 @@ public class AuthController {
 
   @ExceptionHandler(InvalidTokenException.class)
   public ResponseEntity<ErrorResponse> handleInvalidTokenException(InvalidTokenException ex) {
-    log.error("Authentication token validation failed: {}", ex.getMessage());
+    log.error("Authentication token validation failed: {}", ex.getMessage(), ex);
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
         .body(new ErrorResponse("Invalid authentication token"));
   }
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleException(Exception ex) {
-    log.error("Internal server error: {}", ex.getMessage());
+    log.error("Internal server error: {}", ex.getMessage(), ex);
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(new ErrorResponse("An unexpected error occurred."));
   }

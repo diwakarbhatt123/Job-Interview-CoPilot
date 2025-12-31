@@ -68,3 +68,45 @@ it("redirects to login on 401", async () => {
 
   await waitFor(() => expect(push).toHaveBeenCalledWith("/login"));
 });
+
+it("shows error on non-PDF upload", async () => {
+  render(<NewProfile />);
+
+  fireEvent.click(screen.getByRole("button", {name: /upload cv/i}));
+
+  const input = screen.getByLabelText(/click to upload/i) as HTMLInputElement;
+  const file = new File(["hello"], "resume.txt", {type: "text/plain"});
+  fireEvent.change(input, {target: {files: [file]}});
+
+  expect(await screen.findByText(/only pdf files are supported/i)).toBeInTheDocument();
+  expect(global.fetch).not.toHaveBeenCalled();
+});
+
+it("submits upload as FormData", async () => {
+  (global.fetch as jest.Mock).mockResolvedValue({
+    ok: true,
+    status: 201,
+    json: async () => ({id: "profile-1"}),
+  });
+
+  render(<NewProfile />);
+
+  fireEvent.change(screen.getByLabelText(/display name/i), {
+    target: {value: "Primary"},
+  });
+  fireEvent.click(screen.getByRole("button", {name: /upload cv/i}));
+
+  const input = document.querySelector('input[name="cvFile"]') as HTMLInputElement;
+  const file = new File(["%PDF-1.4"], "resume.pdf", {type: "application/pdf"});
+  Object.defineProperty(input, "files", {value: [file]});
+  Object.defineProperty(input, "value", {value: "resume.pdf"});
+  fireEvent.change(input);
+  expect(input.files?.[0]).toBe(file);
+
+  fireEvent.click(screen.getByRole("button", {name: /create profile/i}));
+
+  await waitFor(() => expect(global.fetch).toHaveBeenCalled());
+  const [, options] = (global.fetch as jest.Mock).mock.calls[0];
+  expect(options.method).toBe("POST");
+  expect(options.body).toBeInstanceOf(FormData);
+});

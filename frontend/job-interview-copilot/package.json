@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@eslint/eslintrc": "^3.3.3",
+    "formidable": "^3.5.2",
     "next": "16.1.0",
     "react": "19.2.3",
     "react-dom": "19.2.3"
@@ -24,6 +25,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/formidable": "^3.4.5",
     "@types/jest": "^29.5.12",
     "@types/node": "^20",
     "@types/react": "^19",
