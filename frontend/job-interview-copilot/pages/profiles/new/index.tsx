@@ -1,42 +1,41 @@
-import Link from "next/link";
-import {useRouter} from "next/router";
-import {FormEvent, useRef, useState} from "react";
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { FormEvent, useRef, useState } from 'react'
 
 export default function NewProfile() {
-  const router = useRouter();
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [mode, setMode] = useState<"paste" | "upload">("paste");
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const maxUploadBytes = 5 * 1024 * 1024;
-  const pasteRef = useRef<HTMLTextAreaElement | null>(null);
-  const fileRef = useRef<HTMLInputElement | null>(null);
+  const [mode, setMode] = useState<'paste' | 'upload'>('paste')
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+  const maxUploadBytes = 5 * 1024 * 1024
+  const pasteRef = useRef<HTMLTextAreaElement | null>(null)
+  const fileRef = useRef<HTMLInputElement | null>(null)
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
     if (file) {
       if (file.type !== 'application/pdf') {
         setError('Only PDF files are supported.')
-        setUploadedFile(null);
+        setUploadedFile(null)
         if (fileRef.current) {
-          fileRef.current.value = "";
-          fileRef.current.focus();
+          fileRef.current.value = ''
+          fileRef.current.focus()
         }
         return
       }
       if (file.size > maxUploadBytes) {
         setError('File size must be 5 MB or less.')
-        setUploadedFile(null);
+        setUploadedFile(null)
         if (fileRef.current) {
-          fileRef.current.value = "";
-          fileRef.current.focus();
+          fileRef.current.value = ''
+          fileRef.current.focus()
         }
         return
       }
-      setUploadedFile(file);
+      setUploadedFile(file)
     }
   }
-
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -47,7 +46,10 @@ export default function NewProfile() {
       const formData = new FormData(event.currentTarget)
       const displayName = String(formData.get('displayName') || '').trim()
       const pastedCV = String(formData.get('cvPaste') || '').trim()
-      const file = mode === 'upload' ? (uploadedFile ?? (formData.get('cvFile') as File | null)) : null
+      const file =
+        mode === 'upload'
+          ? (uploadedFile ?? (formData.get('cvFile') as File | null))
+          : null
 
       if (!displayName) {
         setError('Display name is required.')
@@ -69,16 +71,16 @@ export default function NewProfile() {
       const response = await (async () => {
         if (mode === 'paste') {
           const body = JSON.stringify({
-            'displayName': displayName,
-            'pastedCV': pastedCV,
-            'sourceType': "PASTED",
+            displayName: displayName,
+            pastedCV: pastedCV,
+            sourceType: 'PASTED',
           })
-          return fetch("/api/profile/new", {
-            method: "POST",
+          return fetch('/api/profile/new', {
+            method: 'POST',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
             },
-            body: body
+            body: body,
           })
         }
 
@@ -88,8 +90,8 @@ export default function NewProfile() {
         if (file) {
           form.append('resume', file)
         }
-        return fetch("/api/profile/upload", {
-          method: "POST",
+        return fetch('/api/profile/upload', {
+          method: 'POST',
           body: form,
         })
       })()
@@ -109,7 +111,9 @@ export default function NewProfile() {
       if (response.status === 400 || response.status === 409) {
         const payload = await response.json().catch(() => null)
         const message =
-          payload?.error || payload?.message || 'Invalid input. Please check and try again.'
+          payload?.error ||
+          payload?.message ||
+          'Invalid input. Please check and try again.'
         setError(message)
         return
       }
@@ -125,9 +129,8 @@ export default function NewProfile() {
 
   return (
     <section className="bg-gray-50">
-      <div
-        className="mx-auto flex flex-col items-center justify-center px-6 py-8 md:h-screen lg:py-0">
-        <div className="w-full rounded-lg bg-white shadow sm:max-w-lg md:max-w-3xl md:mt-0 xl:p-0">
+      <div className="mx-auto flex flex-col items-center justify-center px-6 py-8 md:h-screen lg:py-0">
+        <div className="w-full rounded-lg bg-white shadow sm:max-w-lg md:mt-0 md:max-w-3xl xl:p-0">
           <div className="space-y-4 p-6 sm:p-8 md:space-y-6">
             <p className="text-left text-sm font-light text-gray-500">
               <Link
@@ -137,14 +140,18 @@ export default function NewProfile() {
                 {'← Back to dashboard'}
               </Link>
             </p>
-            <h1
-              className="text-center text-3xl leading-tight font-bold tracking-normal text-gray-900 md:text-3xl">
+            <h1 className="text-center text-3xl leading-tight font-bold tracking-normal text-gray-900 md:text-3xl">
               Create your profile
             </h1>
             <h2 className="text-center leading-tight tracking-tight text-gray-500">
-              Upload or paste your CV so we can extract your skills and experience
+              Upload or paste your CV so we can extract your skills and
+              experience
             </h2>
-            <form className="space-y-4 md:space-y-6" onSubmit={onSubmit} noValidate>
+            <form
+              className="space-y-4 md:space-y-6"
+              onSubmit={onSubmit}
+              noValidate
+            >
               <div>
                 <label
                   htmlFor="displayName"
@@ -162,26 +169,31 @@ export default function NewProfile() {
                 />
               </div>
               <div className="sm:hidden">
-                <label htmlFor="tabs" className="sr-only">Choose CV mode</label>
+                <label htmlFor="tabs" className="sr-only">
+                  Choose CV mode
+                </label>
                 <select
                   id="tabs"
                   value={mode}
-                  onChange={(e) => setMode(e.target.value as "paste" | "upload")}
-                  className="block w-full rounded-base border border-default-medium bg-neutral-secondary-medium px-3 py-2.5 text-sm"
+                  onChange={(e) =>
+                    setMode(e.target.value as 'paste' | 'upload')
+                  }
+                  className="rounded-base border-default-medium bg-neutral-secondary-medium block w-full border px-3 py-2.5 text-sm"
                 >
                   <option value="paste">Paste CV</option>
                   <option value="upload">Upload CV</option>
                 </select>
                 <p className="mt-2 text-xs text-gray-500">
-                  {mode === "paste" ? "Paste mode selected" : "Upload mode selected"}
+                  {mode === 'paste'
+                    ? 'Paste mode selected'
+                    : 'Upload mode selected'}
                 </p>
               </div>
-              <ul
-                className="relative hidden sm:flex rounded-md bg-gray-200 text-sm font-medium overflow-hidden">
+              <ul className="relative hidden overflow-hidden rounded-md bg-gray-200 text-sm font-medium sm:flex">
                 {/* Sliding background */}
                 <span
                   className={`absolute inset-y-0 w-1/2 rounded-md bg-black transition-transform duration-300 ease-in-out ${
-                    mode === "paste" ? "translate-x-0" : "translate-x-full"
+                    mode === 'paste' ? 'translate-x-0' : 'translate-x-full'
                   }`}
                 />
 
@@ -190,12 +202,12 @@ export default function NewProfile() {
                   <button
                     type="button"
                     onClick={() => {
-                      setMode("paste")
-                      if (fileRef.current) fileRef.current.value = ""
-                      setUploadedFile(null);
+                      setMode('paste')
+                      if (fileRef.current) fileRef.current.value = ''
+                      setUploadedFile(null)
                     }}
                     className={`w-full px-4 py-2.5 transition-colors duration-300 ${
-                      mode === "paste" ? "text-white" : "text-black"
+                      mode === 'paste' ? 'text-white' : 'text-black'
                     }`}
                   >
                     Paste CV
@@ -207,11 +219,11 @@ export default function NewProfile() {
                   <button
                     type="button"
                     onClick={() => {
-                      setMode("upload")
-                      if (pasteRef.current) pasteRef.current.value = ""
+                      setMode('upload')
+                      if (pasteRef.current) pasteRef.current.value = ''
                     }}
                     className={`w-full px-4 py-2.5 transition-colors duration-300 ${
-                      mode === "upload" ? "text-white" : "text-black"
+                      mode === 'upload' ? 'text-white' : 'text-black'
                     }`}
                   >
                     Upload CV
@@ -221,7 +233,7 @@ export default function NewProfile() {
               <div className="relative mt-4 overflow-hidden">
                 <div
                   className={`flex w-[200%] transition-transform duration-300 ease-in-out ${
-                    mode === "paste" ? "translate-x-0" : "-translate-x-1/2"
+                    mode === 'paste' ? 'translate-x-0' : '-translate-x-1/2'
                   }`}
                 >
                   {/* Paste CV panel */}
@@ -235,7 +247,7 @@ export default function NewProfile() {
                       placeholder="Paste your CV content here"
                       rows={10}
                       ref={pasteRef}
-                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-primary-600 focus:ring-primary-600"
+                      className="focus:border-primary-600 focus:ring-primary-600 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900"
                     />
                   </div>
 
@@ -247,11 +259,7 @@ export default function NewProfile() {
                       {!uploadedFile && (
                         <label
                           htmlFor="dropzone-file"
-                          className="
-          flex min-h-55 w-full flex-col items-center justify-center gap-3
-          rounded-xl border border-dashed border-gray-300 bg-gray-50
-          px-6 py-8 text-center transition hover:bg-gray-100
-        "
+                          className="flex min-h-55 w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-gray-300 bg-gray-50 px-6 py-8 text-center transition hover:bg-gray-100"
                         >
                           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
                             <svg
@@ -272,8 +280,12 @@ export default function NewProfile() {
 
                           <div className="space-y-1">
                             <p className="text-sm">
-                              <span className="font-medium text-gray-900">Click to upload</span>{" "}
-                              <span className="text-gray-500">or drag and drop</span>
+                              <span className="font-medium text-gray-900">
+                                Click to upload
+                              </span>{' '}
+                              <span className="text-gray-500">
+                                or drag and drop
+                              </span>
                             </p>
                             <p className="text-xs text-gray-400">
                               PDF only • up to 5 MB
@@ -307,7 +319,8 @@ export default function NewProfile() {
                                 {uploadedFile.name}
                               </p>
                               <p className="text-xs text-gray-500">
-                                {(uploadedFile.size / 1024).toFixed(1)} KB · Uploaded
+                                {(uploadedFile.size / 1024).toFixed(1)} KB ·
+                                Uploaded
                               </p>
                             </div>
                           </div>
@@ -317,7 +330,7 @@ export default function NewProfile() {
                               type="button"
                               className="text-xs font-medium text-gray-700 underline-offset-2 hover:underline"
                               onClick={() => {
-                                fileRef.current?.click(); // reopen picker
+                                fileRef.current?.click() // reopen picker
                               }}
                             >
                               Change file
@@ -326,9 +339,9 @@ export default function NewProfile() {
                               type="button"
                               className="text-xs font-medium text-red-600 underline-offset-2 hover:underline"
                               onClick={() => {
-                                setUploadedFile(null);
+                                setUploadedFile(null)
                                 if (fileRef.current) {
-                                  fileRef.current.value = "";
+                                  fileRef.current.value = ''
                                 }
                               }}
                             >
@@ -353,7 +366,9 @@ export default function NewProfile() {
                 </div>
               </div>
               {error && (
-                <p className="text-sm font-light text-red-700" role="alert">{error}</p>
+                <p className="text-sm font-light text-red-700" role="alert">
+                  {error}
+                </p>
               )}
               <button
                 type="submit"

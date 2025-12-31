@@ -1,12 +1,16 @@
-import {withAuthHeader} from "@/lib/api/withAuthHeader";
-import {NextApiRequest, NextApiResponse} from "next";
-import {apiFetchRaw} from "@/lib/api";
-import {UnauthorizedError} from "@/error/UnauthorizedError";
+import { withAuthHeader } from '@/lib/api/withAuthHeader'
+import { NextApiRequest, NextApiResponse } from 'next'
+import { apiFetchRaw } from '@/lib/api'
+import { UnauthorizedError } from '@/error/UnauthorizedError'
 
-export default withAuthHeader(async function (req: NextApiRequest, res: NextApiResponse, authHeaders: Record<string, string>) {
+export default withAuthHeader(async function (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  authHeaders: Record<string, string>,
+) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST'])
-    return res.status(405).json({error: 'Method not allowed'})
+    return res.status(405).json({ error: 'Method not allowed' })
   }
 
   try {
@@ -28,11 +32,11 @@ export default withAuthHeader(async function (req: NextApiRequest, res: NextApiR
   } catch (error: unknown) {
     console.error(error)
     if (error instanceof UnauthorizedError) {
-      res.status(401).json({error: 'Unauthorized'})
+      res.status(401).json({ error: 'Unauthorized' })
     } else {
       const message =
         error instanceof Error ? error.message : 'Unexpected error'
-      res.status(500).json({error: message})
+      res.status(500).json({ error: message })
     }
   }
 })
