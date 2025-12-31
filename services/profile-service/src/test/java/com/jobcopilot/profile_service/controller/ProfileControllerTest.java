@@ -50,7 +50,8 @@ class ProfileControllerTest {
             post("/profile")
                 .header("X-User-Id", "user-1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"displayName\":\"Primary\"}"))
+                .content(
+                    "{\"displayName\":\"Primary\",\"pastedCV\":\"Resume text\",\"sourceType\":\"PASTED\"}"))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value("profile-1"))
         .andExpect(jsonPath("$.status").value("CREATED"));
@@ -63,7 +64,8 @@ class ProfileControllerTest {
             post("/profile")
                 .header("X-User-Id", "user-1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"displayName\":\" \"}"))
+                .content(
+                    "{\"displayName\":\" \",\"pastedCV\":\"Resume text\",\"sourceType\":\"PASTED\"}"))
         .andExpect(status().isBadRequest());
   }
 

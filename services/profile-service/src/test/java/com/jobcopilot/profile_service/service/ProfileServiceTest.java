@@ -18,6 +18,7 @@ import com.jobcopilot.profile_service.repository.ProfileRepository;
 import com.jobcopilot.profile_service.repository.ProfileSummaryView;
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,12 +29,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ProfileServiceTest {
 
   @Mock private ProfileRepository profileRepository;
+  @Mock private ExecutorService executor;
 
   @InjectMocks private ProfileService profileService;
 
   @Test
   void createProfileSucceeds() {
-    CreateProfileRequest request = new CreateProfileRequest("Primary", "resume text", SourceType.PASTED);
+    CreateProfileRequest request =
+        new CreateProfileRequest("Primary", "resume text", SourceType.PASTED);
     when(profileRepository.existsByUserIdAndDisplayName("user-1", "Primary")).thenReturn(false);
     when(profileRepository.save(any(Profile.class)))
         .thenAnswer(
@@ -51,7 +54,8 @@ class ProfileServiceTest {
 
   @Test
   void createProfileRejectsDuplicateDisplayName() {
-    CreateProfileRequest request = new CreateProfileRequest("Primary", "resume text", SourceType.PASTED);
+    CreateProfileRequest request =
+        new CreateProfileRequest("Primary", "resume text", SourceType.PASTED);
     when(profileRepository.existsByUserIdAndDisplayName("user-1", "Primary")).thenReturn(true);
 
     assertThatThrownBy(() -> profileService.createProfile(request, "user-1"))
@@ -111,11 +115,56 @@ class ProfileServiceTest {
       Instant updatedAt,
       Derived derived,
       ResumeView resume)
-      implements ProfileSummaryView {}
+      implements ProfileSummaryView {
+    @Override
+    public String getId() {
+      return id;
+    }
+
+    @Override
+    public String getDisplayName() {
+      return displayName;
+    }
+
+    @Override
+    public ProfileStatus getStatus() {
+      return status;
+    }
+
+    @Override
+    public Instant getCreatedAt() {
+      return createdAt;
+    }
+
+    @Override
+    public Instant getUpdatedAt() {
+      return updatedAt;
+    }
+
+    @Override
+    public Derived getDerived() {
+      return derived;
+    }
+
+    @Override
+    public ResumeView getResume() {
+      return resume;
+    }
+  }
 
   private record TestResumeView(ProfileSummaryView.ParsedView parsed)
-      implements ProfileSummaryView.ResumeView {}
+      implements ProfileSummaryView.ResumeView {
+    @Override
+    public ProfileSummaryView.ParsedView getParsed() {
+      return parsed;
+    }
+  }
 
   private record TestParsedView(Integer yearsOfExperience)
-      implements ProfileSummaryView.ParsedView {}
+      implements ProfileSummaryView.ParsedView {
+    @Override
+    public Integer getYearsOfExperience() {
+      return yearsOfExperience;
+    }
+  }
 }

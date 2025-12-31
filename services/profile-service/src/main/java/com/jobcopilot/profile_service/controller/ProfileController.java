@@ -1,7 +1,7 @@
 package com.jobcopilot.profile_service.controller;
 
-import com.jobcopilot.profile_service.exception.ProfileAlreadyExistsException;
 import com.jobcopilot.profile_service.enums.SourceType;
+import com.jobcopilot.profile_service.exception.ProfileAlreadyExistsException;
 import com.jobcopilot.profile_service.model.request.CreateProfileRequest;
 import com.jobcopilot.profile_service.model.response.ErrorResponse;
 import com.jobcopilot.profile_service.model.response.ProfileStatusResponse;

@@ -1,7 +1,7 @@
 package com.jobcopilot.profile_service.service;
 
-import com.jobcopilot.profile_service.model.request.CreateProfileRequest;
 import com.jobcopilot.profile_service.enums.SourceType;
+import com.jobcopilot.profile_service.model.request.CreateProfileRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
