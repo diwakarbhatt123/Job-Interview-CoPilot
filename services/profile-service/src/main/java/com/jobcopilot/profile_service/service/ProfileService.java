@@ -3,6 +3,7 @@ package com.jobcopilot.profile_service.service;
 import com.jobcopilot.profile_service.entity.Profile;
 import com.jobcopilot.profile_service.entity.values.Derived;
 import com.jobcopilot.profile_service.enums.ProfileStatus;
+import com.jobcopilot.profile_service.enums.SourceType;
 import com.jobcopilot.profile_service.exception.ProfileAlreadyExistsException;
 import com.jobcopilot.profile_service.model.request.CreateProfileRequest;
 import com.jobcopilot.profile_service.model.response.ProfileStatusResponse;
@@ -12,17 +13,26 @@ import com.jobcopilot.profile_service.repository.ProfileSummaryView;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ProfileService {
   private final ProfileRepository profileRepository;
+  private final ResumeParsingService resumeParsingService;
+  private final ExecutorService executorService;
 
   @Autowired
-  public ProfileService(ProfileRepository profileRepository) {
+  public ProfileService(
+      ProfileRepository profileRepository,
+      ResumeParsingService resumeParsingService,
+      ExecutorService executorService) {
     this.profileRepository = profileRepository;
+    this.resumeParsingService = resumeParsingService;
+    this.executorService = executorService;
   }
 
   public ProfileStatusResponse createProfile(
@@ -41,6 +51,26 @@ public class ProfileService {
             .build();
 
     Profile savedProfile = profileRepository.save(newProfile);
+    executorService.submit(() -> resumeParsingService.parseResume(createProfileRequest, userId));
+    return new ProfileStatusResponse(savedProfile.getId(), savedProfile.getStatus());
+  }
+
+  public ProfileStatusResponse createProfileFromUpload(
+      String displayName, MultipartFile resume, SourceType sourceType, String userId) {
+    if (profileRepository.existsByUserIdAndDisplayName(userId, displayName)) {
+      throw new ProfileAlreadyExistsException(displayName);
+    }
+
+    Profile newProfile =
+        Profile.builder()
+            .userId(userId)
+            .displayName(displayName)
+            .status(ProfileStatus.CREATED)
+            .build();
+
+    Profile savedProfile = profileRepository.save(newProfile);
+    executorService.submit(
+        () -> resumeParsingService.parseResumeUpload(resume, sourceType, userId));
     return new ProfileStatusResponse(savedProfile.getId(), savedProfile.getStatus());
   }
 

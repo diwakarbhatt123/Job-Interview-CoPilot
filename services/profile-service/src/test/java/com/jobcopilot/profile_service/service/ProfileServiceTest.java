@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.jobcopilot.profile_service.entity.Profile;
 import com.jobcopilot.profile_service.entity.values.Derived;
 import com.jobcopilot.profile_service.enums.ProfileStatus;
+import com.jobcopilot.profile_service.enums.SourceType;
 import com.jobcopilot.profile_service.exception.ProfileAlreadyExistsException;
 import com.jobcopilot.profile_service.model.request.CreateProfileRequest;
 import com.jobcopilot.profile_service.model.response.ProfileStatusResponse;
@@ -17,6 +18,7 @@ import com.jobcopilot.profile_service.repository.ProfileRepository;
 import com.jobcopilot.profile_service.repository.ProfileSummaryView;
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,12 +29,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ProfileServiceTest {
 
   @Mock private ProfileRepository profileRepository;
+  @Mock private ExecutorService executor;
 
   @InjectMocks private ProfileService profileService;
 
   @Test
   void createProfileSucceeds() {
-    CreateProfileRequest request = new CreateProfileRequest("Primary");
+    CreateProfileRequest request =
+        new CreateProfileRequest("Primary", "resume text", SourceType.PASTED);
     when(profileRepository.existsByUserIdAndDisplayName("user-1", "Primary")).thenReturn(false);
     when(profileRepository.save(any(Profile.class)))
         .thenAnswer(
@@ -50,7 +54,8 @@ class ProfileServiceTest {
 
   @Test
   void createProfileRejectsDuplicateDisplayName() {
-    CreateProfileRequest request = new CreateProfileRequest("Primary");
+    CreateProfileRequest request =
+        new CreateProfileRequest("Primary", "resume text", SourceType.PASTED);
     when(profileRepository.existsByUserIdAndDisplayName("user-1", "Primary")).thenReturn(true);
 
     assertThatThrownBy(() -> profileService.createProfile(request, "user-1"))
@@ -102,32 +107,15 @@ class ProfileServiceTest {
     assertThat(responses.get(0).summary().skills()).containsExactly(Skill.JAVA);
   }
 
-  private static final class TestProfileSummaryView implements ProfileSummaryView {
-    private final String id;
-    private final String displayName;
-    private final ProfileStatus status;
-    private final Instant createdAt;
-    private final Instant updatedAt;
-    private final Derived derived;
-    private final ResumeView resume;
-
-    private TestProfileSummaryView(
-        String id,
-        String displayName,
-        ProfileStatus status,
-        Instant createdAt,
-        Instant updatedAt,
-        Derived derived,
-        ResumeView resume) {
-      this.id = id;
-      this.displayName = displayName;
-      this.status = status;
-      this.createdAt = createdAt;
-      this.updatedAt = updatedAt;
-      this.derived = derived;
-      this.resume = resume;
-    }
-
+  private record TestProfileSummaryView(
+      String id,
+      String displayName,
+      ProfileStatus status,
+      Instant createdAt,
+      Instant updatedAt,
+      Derived derived,
+      ResumeView resume)
+      implements ProfileSummaryView {
     @Override
     public String getId() {
       return id;
@@ -164,26 +152,16 @@ class ProfileServiceTest {
     }
   }
 
-  private static final class TestResumeView implements ProfileSummaryView.ResumeView {
-    private final ProfileSummaryView.ParsedView parsed;
-
-    private TestResumeView(ProfileSummaryView.ParsedView parsed) {
-      this.parsed = parsed;
-    }
-
+  private record TestResumeView(ProfileSummaryView.ParsedView parsed)
+      implements ProfileSummaryView.ResumeView {
     @Override
     public ProfileSummaryView.ParsedView getParsed() {
       return parsed;
     }
   }
 
-  private static final class TestParsedView implements ProfileSummaryView.ParsedView {
-    private final Integer yearsOfExperience;
-
-    private TestParsedView(Integer yearsOfExperience) {
-      this.yearsOfExperience = yearsOfExperience;
-    }
-
+  private record TestParsedView(Integer yearsOfExperience)
+      implements ProfileSummaryView.ParsedView {
     @Override
     public Integer getYearsOfExperience() {
       return yearsOfExperience;
