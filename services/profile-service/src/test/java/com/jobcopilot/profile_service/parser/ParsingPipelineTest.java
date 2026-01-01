@@ -31,8 +31,7 @@ class ParsingPipelineTest {
             + "Java, Spring Boot, AWS\n";
 
     ParsingPipeline pipeline =
-        new PipelineBuilder()
-            .init()
+        PipelineBuilder.init()
             .addStage(new TextNormalizer())
             .addStage(new Sectionizer())
             .addStage(new YearsOfExperienceExtractor())

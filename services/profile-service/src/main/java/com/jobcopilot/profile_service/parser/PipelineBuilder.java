@@ -8,18 +8,18 @@ import java.util.concurrent.ExecutorService;
 public class PipelineBuilder {
 
   private final List<PipelineStage> stages = new ArrayList<>();
-  private ExecutorService executor;
+  private final ExecutorService executor;
 
-  public PipelineBuilder init() {
-    this.executor = null;
-    this.stages.clear();
-    return this;
+  private PipelineBuilder(ExecutorService executorService) {
+    this.executor = executorService;
   }
 
-  public PipelineBuilder init(ExecutorService executor) {
-    this.executor = executor;
-    this.stages.clear();
-    return this;
+  public static PipelineBuilder init() {
+    return new PipelineBuilder(null);
+  }
+
+  public static PipelineBuilder init(ExecutorService executor) {
+    return new PipelineBuilder(executor);
   }
 
   public PipelineBuilder addStage(PipelineStage stage) {

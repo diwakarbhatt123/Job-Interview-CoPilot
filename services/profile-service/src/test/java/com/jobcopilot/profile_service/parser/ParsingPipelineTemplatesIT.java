@@ -206,7 +206,7 @@ class ParsingPipelineTemplatesIT {
                     Skill.MONGODB,
                     Skill.KAFKA),
                 "Maharshi Dayanand University",
-                null,
+                "HelloFresh SE",
                 "Senior Software Development Engineer",
                 8)));
   }
@@ -215,8 +215,7 @@ class ParsingPipelineTemplatesIT {
   @MethodSource("templates")
   void parsesMultipleResumeTemplates(String name, TemplateCase tc) throws Exception {
     ParsingPipeline pipeline =
-        new PipelineBuilder()
-            .init()
+        PipelineBuilder.init()
             .addStage(new TextNormalizer())
             .addStage(new Sectionizer())
             .addStage(new YearsOfExperienceExtractor())

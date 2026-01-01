@@ -56,7 +56,8 @@ public class ExperienceExtractor implements PipelineStage {
 
     ExperienceExtractedOutput.ExperienceEntryBuilder current = null;
 
-    for (String raw : lines) {
+    for (int i = 0; i < lines.size(); i++) {
+      String raw = lines.get(i);
       if (raw == null) continue;
 
       String line = raw.trim();
@@ -77,6 +78,29 @@ public class ExperienceExtractor implements PipelineStage {
         current.startYear = hp.startYear.orElse(null);
         current.endYear = hp.endYear.orElse(null);
         current.isCurrent = hp.isCurrent;
+
+        if (current.company == null) {
+          int j = i + 1;
+          while (j < lines.size()) {
+            String nextRaw = lines.get(j);
+            if (nextRaw == null) {
+              j++;
+              continue;
+            }
+            String next = nextRaw.trim();
+            if (next.isEmpty()) {
+              j++;
+              continue;
+            }
+            if (!isBulletLine(next)
+                && !containsDateRange(next)
+                && !isLikelyExperienceHeader(next)) {
+              current.company = next;
+              i = j;
+            }
+            break;
+          }
+        }
 
         continue;
       }

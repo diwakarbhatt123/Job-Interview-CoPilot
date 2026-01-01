@@ -30,6 +30,26 @@ public class TextNormalizer implements PipelineStage {
           TextNormalizer::repairLineWrapping,
           TextNormalizer::cleanUpHeaders);
 
+  @Override
+  public StageOutput process(StageInput input) {
+    String rawText = getRawText(input);
+    String finalText =
+        NORMALIZATION_STEPS.stream()
+            .reduce(rawText, (text, op) -> op.apply(text), (_, right) -> right);
+    return new NormalizedTextOutput(finalText, rawText);
+  }
+
+  private String getRawText(StageInput input) {
+    if (input instanceof PlainTextAnalysisPipelineRequest(String plainText)) {
+      return plainText;
+    } else if (input instanceof ExtractedTextInput(String extractedText)) {
+      return extractedText;
+    } else {
+      throw new IllegalArgumentException(
+          "Unsupported input type for TextNormalizer: " + input.getClass());
+    }
+  }
+
   private static String normalizeNewLines(String text) {
     return text.replace("\r\n", "\n").replace("\r", "\n");
   }
@@ -141,25 +161,5 @@ public class TextNormalizer implements PipelineStage {
     }
 
     return NUMBERED_LIST.matcher(trimmed).matches();
-  }
-
-  @Override
-  public StageOutput process(StageInput input) {
-    String rawText = getRawText(input);
-    String finalText =
-        NORMALIZATION_STEPS.stream()
-            .reduce(rawText, (text, op) -> op.apply(text), (_, right) -> right);
-    return new NormalizedTextOutput(finalText, rawText);
-  }
-
-  private String getRawText(StageInput input) {
-    if (input instanceof PlainTextAnalysisPipelineRequest(String plainText)) {
-      return plainText;
-    } else if (input instanceof ExtractedTextInput(String extractedText)) {
-      return extractedText;
-    } else {
-      throw new IllegalArgumentException(
-          "Unsupported input type for TextNormalizer: " + input.getClass());
-    }
   }
 }

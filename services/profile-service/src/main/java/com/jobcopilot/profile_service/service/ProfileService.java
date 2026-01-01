@@ -3,13 +3,13 @@ package com.jobcopilot.profile_service.service;
 import com.jobcopilot.profile_service.entity.Profile;
 import com.jobcopilot.profile_service.entity.values.Derived;
 import com.jobcopilot.profile_service.enums.ProfileStatus;
-import com.jobcopilot.profile_service.enums.SourceType;
 import com.jobcopilot.profile_service.exception.ProfileAlreadyExistsException;
 import com.jobcopilot.profile_service.model.request.CreateProfileRequest;
 import com.jobcopilot.profile_service.model.response.ProfileStatusResponse;
 import com.jobcopilot.profile_service.model.response.ProfileSummaryResponse;
 import com.jobcopilot.profile_service.repository.ProfileRepository;
 import com.jobcopilot.profile_service.repository.ProfileSummaryView;
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -51,12 +51,15 @@ public class ProfileService {
             .build();
 
     Profile savedProfile = profileRepository.save(newProfile);
-    executorService.submit(() -> resumeParsingService.parseResume(createProfileRequest, userId));
+    executorService.submit(
+        () ->
+            resumeParsingService.parseResume(
+                createProfileRequest.pastedCV(), savedProfile.getId(), Instant.now()));
     return new ProfileStatusResponse(savedProfile.getId(), savedProfile.getStatus());
   }
 
   public ProfileStatusResponse createProfileFromUpload(
-      String displayName, MultipartFile resume, SourceType sourceType, String userId) {
+      String displayName, MultipartFile resume, String userId) {
     if (profileRepository.existsByUserIdAndDisplayName(userId, displayName)) {
       throw new ProfileAlreadyExistsException(displayName);
     }
@@ -70,7 +73,7 @@ public class ProfileService {
 
     Profile savedProfile = profileRepository.save(newProfile);
     executorService.submit(
-        () -> resumeParsingService.parseResumeUpload(resume, sourceType, userId));
+        () -> resumeParsingService.parseResumeFile(resume, savedProfile.getId(), Instant.now()));
     return new ProfileStatusResponse(savedProfile.getId(), savedProfile.getStatus());
   }
 
