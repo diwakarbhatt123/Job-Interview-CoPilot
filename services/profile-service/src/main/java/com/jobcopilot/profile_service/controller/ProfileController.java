@@ -84,7 +84,7 @@ public class ProfileController {
     }
 
     ProfileStatusResponse profileStatusResponse =
-        profileService.createProfileFromUpload(displayName, resume, sourceType, userId);
+        profileService.createProfileFromUpload(displayName, resume, userId);
     return ResponseEntity.status(HttpStatus.CREATED).body(profileStatusResponse);
   }
 
