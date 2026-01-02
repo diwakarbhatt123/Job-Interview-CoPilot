@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +30,7 @@ public class ProfileService {
   public ProfileService(
       ProfileRepository profileRepository,
       ResumeParsingService resumeParsingService,
-      ExecutorService executorService) {
+      @Qualifier("profileTaskExecutor") ExecutorService executorService) {
     this.profileRepository = profileRepository;
     this.resumeParsingService = resumeParsingService;
     this.executorService = executorService;

@@ -8,8 +8,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ExecutorConfig {
 
-  @Bean
-  public ExecutorService getExecutorService() {
+  @Bean("profileTaskExecutor")
+  public ExecutorService profileTaskExecutor() {
+    return Executors.newFixedThreadPool(5);
+  }
+
+  @Bean("parserExecutor")
+  public ExecutorService parserExecutor() {
     return Executors.newFixedThreadPool(5);
   }
 }
