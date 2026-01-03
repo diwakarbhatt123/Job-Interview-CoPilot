@@ -1,5 +1,4 @@
 package com.jobcopilot.profile_service.parser.model.request;
 
-import org.springframework.web.multipart.MultipartFile;
-
-public record PDFAnalysisPipelineRequest(MultipartFile multipartFile) implements PipelineRequest {}
+public record PDFAnalysisPipelineRequest(byte[] pdfBytes, String filename, String contentType)
+    implements PipelineRequest {}

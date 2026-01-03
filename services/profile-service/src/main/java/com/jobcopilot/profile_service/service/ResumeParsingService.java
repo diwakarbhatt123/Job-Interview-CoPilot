@@ -1,6 +1,8 @@
 package com.jobcopilot.profile_service.service;
 
 import com.jobcopilot.profile_service.entity.values.*;
+import com.jobcopilot.profile_service.enums.Domain;
+import com.jobcopilot.profile_service.enums.ExperienceLevel;
 import com.jobcopilot.profile_service.enums.ProfileStatus;
 import com.jobcopilot.profile_service.enums.SourceType;
 import com.jobcopilot.profile_service.parser.ParsingPipeline;
@@ -15,7 +17,6 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -51,6 +52,8 @@ public class ResumeParsingService {
                 PipelineResponse response = resumeParsingPipeline.execute(pipelineRequest);
 
                 Resume resume = toResume(response, requestedAt, SourceType.PASTED);
+                Derived derived = toDerived(response);
+                profile.setDerived(derived);
                 profile.setResume(resume);
                 profile.setStatus(ProfileStatus.PARSING_COMPLETED);
                 profileRepository.save(profile);
@@ -69,10 +72,12 @@ public class ResumeParsingService {
     log.info("Parsing complete for profileId {}", profileId);
   }
 
-  public void parseResumeFile(MultipartFile resume, String profileId, Instant requestedAt) {
+  public void parseResumeFile(
+      byte[] pdfBytes, String filename, String contentType, String profileId, Instant requestedAt) {
     log.info("Received upload parsing request for profile id {}", profileId);
 
-    PDFAnalysisPipelineRequest pipelineRequest = new PDFAnalysisPipelineRequest(resume);
+    PDFAnalysisPipelineRequest pipelineRequest =
+        new PDFAnalysisPipelineRequest(pdfBytes, filename, contentType);
 
     profileRepository
         .findById(profileId)
@@ -82,6 +87,8 @@ public class ResumeParsingService {
                 PipelineResponse response = resumePdfParsingPipeline.execute(pipelineRequest);
 
                 Resume parsedResume = toResume(response, requestedAt, SourceType.UPLOADED);
+                Derived derived = toDerived(response);
+                profile.setDerived(derived);
                 profile.setResume(parsedResume);
                 profile.setStatus(ProfileStatus.PARSING_COMPLETED);
                 profileRepository.save(profile);
@@ -141,6 +148,14 @@ public class ResumeParsingService {
                                     .build())
                         .collect(Collectors.toList()))
                 .build())
+        .build();
+  }
+
+  private Derived toDerived(PipelineResponse response) {
+    return Derived.builder()
+        .domain(Domain.TECHNOLOGY)
+        .experienceLevel(ExperienceLevel.SENIOR_LEVEL)
+        .skillsNormalized(response.skills())
         .build();
   }
 }
