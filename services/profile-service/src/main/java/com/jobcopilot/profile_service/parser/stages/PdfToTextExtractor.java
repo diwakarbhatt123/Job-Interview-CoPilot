@@ -4,22 +4,28 @@ import com.jobcopilot.profile_service.parser.model.input.ExtractedTextInput;
 import com.jobcopilot.profile_service.parser.model.input.StageInput;
 import com.jobcopilot.profile_service.parser.model.output.StageOutput;
 import com.jobcopilot.profile_service.parser.model.request.PDFAnalysisPipelineRequest;
+import java.io.ByteArrayInputStream;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.springframework.web.multipart.MultipartFile;
 
 public class PdfToTextExtractor implements PipelineStage {
 
   @Override
   public StageOutput process(StageInput input) {
-    if (!(input instanceof PDFAnalysisPipelineRequest(MultipartFile multipartFile))) {
+    if (!(input
+        instanceof
+        PDFAnalysisPipelineRequest(byte[] pdfBytes, String filename, String contentType))) {
       throw new IllegalArgumentException(
           "Unsupported input type for PdfToTextExtractor: " + input.getClass());
     }
 
-    try (var inputStream = multipartFile.getInputStream();
+    if (pdfBytes == null || pdfBytes.length == 0) {
+      throw new IllegalArgumentException("PDF bytes are empty");
+    }
+
+    try (var inputStream = new ByteArrayInputStream(pdfBytes);
         PDDocument document = Loader.loadPDF(new RandomAccessReadBuffer(inputStream))) {
       PDFTextStripper stripper = new PDFTextStripper();
       stripper.setSortByPosition(true);

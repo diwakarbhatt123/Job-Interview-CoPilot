@@ -65,6 +65,13 @@ public class ProfileService {
       throw new ProfileAlreadyExistsException(displayName);
     }
 
+    byte[] resumeBytes;
+    try {
+      resumeBytes = resume.getBytes();
+    } catch (Exception ex) {
+      throw new RuntimeException("Failed to read uploaded resume", ex);
+    }
+
     Profile newProfile =
         Profile.builder()
             .userId(userId)
@@ -74,7 +81,13 @@ public class ProfileService {
 
     Profile savedProfile = profileRepository.save(newProfile);
     executorService.submit(
-        () -> resumeParsingService.parseResumeFile(resume, savedProfile.getId(), Instant.now()));
+        () ->
+            resumeParsingService.parseResumeFile(
+                resumeBytes,
+                resume.getOriginalFilename(),
+                resume.getContentType(),
+                savedProfile.getId(),
+                Instant.now()));
     return new ProfileStatusResponse(savedProfile.getId(), savedProfile.getStatus());
   }
 

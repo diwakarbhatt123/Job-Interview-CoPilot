@@ -23,7 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 class ResumeParsingServiceTest {
@@ -91,7 +90,12 @@ class ResumeParsingServiceTest {
         PipelineResponse.builder().rawText("raw").normalizedText("normalized").build();
 
     when(resumePdfParsingPipeline.execute(any())).thenReturn(response);
-    resumeParsingService.parseResumeFile(new DummyMultipartFile(), "profile-2", Instant.now());
+    resumeParsingService.parseResumeFile(
+        new byte[] {0x25, 0x50, 0x44, 0x46},
+        "resume.pdf",
+        "application/pdf",
+        "profile-2",
+        Instant.now());
 
     ArgumentCaptor<Profile> captor = ArgumentCaptor.forClass(Profile.class);
     verify(profileRepository, atLeastOnce()).save(captor.capture());
@@ -99,47 +103,5 @@ class ResumeParsingServiceTest {
     Profile saved = captor.getValue();
     assertThat(saved.getResume()).isNotNull();
     assertThat(saved.getResume().source().type()).isEqualTo(SourceType.UPLOADED);
-  }
-
-  private static final class DummyMultipartFile implements MultipartFile {
-    @Override
-    public String getName() {
-      return "resume";
-    }
-
-    @Override
-    public String getOriginalFilename() {
-      return "resume.pdf";
-    }
-
-    @Override
-    public String getContentType() {
-      return "application/pdf";
-    }
-
-    @Override
-    public boolean isEmpty() {
-      return false;
-    }
-
-    @Override
-    public long getSize() {
-      return 1;
-    }
-
-    @Override
-    public byte[] getBytes() {
-      return new byte[] {0x25, 0x50, 0x44, 0x46};
-    }
-
-    @Override
-    public java.io.InputStream getInputStream() {
-      return new java.io.ByteArrayInputStream(getBytes());
-    }
-
-    @Override
-    public void transferTo(java.io.File dest) {
-      throw new UnsupportedOperationException("Not used in tests");
-    }
   }
 }
