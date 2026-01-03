@@ -91,7 +91,11 @@ class ResumeParsingServiceTest {
 
     when(resumePdfParsingPipeline.execute(any())).thenReturn(response);
     resumeParsingService.parseResumeFile(
-        new byte[] {0x25, 0x50, 0x44, 0x46}, "resume.pdf", "application/pdf", "profile-2", Instant.now());
+        new byte[] {0x25, 0x50, 0x44, 0x46},
+        "resume.pdf",
+        "application/pdf",
+        "profile-2",
+        Instant.now());
 
     ArgumentCaptor<Profile> captor = ArgumentCaptor.forClass(Profile.class);
     verify(profileRepository, atLeastOnce()).save(captor.capture());
@@ -100,5 +104,4 @@ class ResumeParsingServiceTest {
     assertThat(saved.getResume()).isNotNull();
     assertThat(saved.getResume().source().type()).isEqualTo(SourceType.UPLOADED);
   }
-
 }

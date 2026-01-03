@@ -15,8 +15,8 @@ public class PdfToTextExtractor implements PipelineStage {
   @Override
   public StageOutput process(StageInput input) {
     if (!(input
-        instanceof PDFAnalysisPipelineRequest(
-            byte[] pdfBytes, String filename, String contentType))) {
+        instanceof
+        PDFAnalysisPipelineRequest(byte[] pdfBytes, String filename, String contentType))) {
       throw new IllegalArgumentException(
           "Unsupported input type for PdfToTextExtractor: " + input.getClass());
     }
