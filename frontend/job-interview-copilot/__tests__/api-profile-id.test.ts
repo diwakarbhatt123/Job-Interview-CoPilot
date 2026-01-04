@@ -1,6 +1,5 @@
 import handler from '@/pages/api/profile/[profileId]'
-import { apiFetch } from '@/lib/api'
-import { UnauthorizedError } from '@/error/UnauthorizedError'
+import { apiFetchRaw } from '@/lib/api'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 jest.mock('@/lib/api/withAuthHeader', () => ({
@@ -17,11 +16,7 @@ jest.mock('@/lib/api/withAuthHeader', () => ({
 }))
 
 jest.mock('@/lib/api', () => ({
-  apiFetch: jest.fn(),
-}))
-
-jest.mock('@/error/UnauthorizedError', () => ({
-  UnauthorizedError: class UnauthorizedError extends Error {},
+  apiFetchRaw: jest.fn(),
 }))
 
 type MockRes = {
@@ -73,7 +68,12 @@ it('returns 400 when profileId is missing', async () => {
 })
 
 it('proxies GET to profile service', async () => {
-  ;(apiFetch as jest.Mock).mockResolvedValue({ id: 'profile-1' })
+  ;(apiFetchRaw as jest.Mock).mockResolvedValue({
+    ok: true,
+    status: 200,
+    headers: new Headers({ 'content-type': 'application/json' }),
+    json: async () => ({ id: 'profile-1' }),
+  })
 
   const req = {
     method: 'GET',
@@ -83,7 +83,7 @@ it('proxies GET to profile service', async () => {
 
   await handler(req, res as unknown as NextApiResponse)
 
-  expect(apiFetch).toHaveBeenCalledWith('/profile/profile/profile-1', {
+  expect(apiFetchRaw).toHaveBeenCalledWith('/profile/profile/profile-1', {
     method: 'GET',
     headers: { Authorization: 'Bearer token' },
   })
@@ -91,10 +91,13 @@ it('proxies GET to profile service', async () => {
   expect(res.body).toEqual({ id: 'profile-1' })
 })
 
-it('returns 401 on UnauthorizedError', async () => {
-  ;(apiFetch as jest.Mock).mockRejectedValue(
-    new UnauthorizedError('Unauthorized'),
-  )
+it('returns 401 when upstream returns 401', async () => {
+  ;(apiFetchRaw as jest.Mock).mockResolvedValue({
+    ok: false,
+    status: 401,
+    headers: new Headers({ 'content-type': 'application/json' }),
+    json: async () => ({ error: 'Unauthorized' }),
+  })
 
   const req = {
     method: 'GET',

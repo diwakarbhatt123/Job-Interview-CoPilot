@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { apiFetch } from '@/lib/api'
+import { apiFetchRaw } from '@/lib/api'
 import { withAuthHeader } from '@/lib/api/withAuthHeader'
-import { UnauthorizedError } from '@/error/UnauthorizedError'
 
 export default withAuthHeader(async function (
   req: NextApiRequest,
@@ -21,19 +20,30 @@ export default withAuthHeader(async function (
   }
 
   try {
-    const response = await apiFetch(`/profile/profile/${profileId}`, {
+    const upstream = await apiFetchRaw(`/profile/profile/${profileId}`, {
       method: 'GET',
       headers: authHeaders,
     })
 
-    res.status(200).json(response)
-  } catch (error: unknown) {
-    if (error instanceof UnauthorizedError) {
-      res.status(401).json({ error: error.message })
-    } else {
-      const message =
-        error instanceof Error ? error.message : 'Unexpected error'
-      res.status(500).json({ error: message })
+    if (upstream.status === 401) {
+      return res.status(401).json({ error: 'Unauthorized' })
     }
+
+    if (!upstream.ok) {
+      const contentType = upstream.headers.get('content-type') ?? ''
+      const payload = contentType.includes('application/json')
+        ? await upstream.json()
+        : { error: await upstream.text() }
+      return res.status(upstream.status).json(payload)
+    }
+
+    const contentType = upstream.headers.get('content-type') ?? ''
+    const body = contentType.includes('application/json')
+      ? await upstream.json()
+      : await upstream.text()
+    res.status(200).json(body)
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unexpected error'
+    res.status(500).json({ error: message })
   }
 })
