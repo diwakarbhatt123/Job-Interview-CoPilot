@@ -15,6 +15,12 @@ public interface ProfileRepository extends MongoRepository<Profile, String> {
           "{'_id': 1, 'displayName': 1, 'status': 1, 'createdAt': 1, 'updatedAt': 1, 'derived': 1, 'resume.parsed.yearsOfExperience': 1}")
   List<ProfileSummaryView> findSummariesByUserId(String userId);
 
+  @Query(
+      value = "{'_id': ?0, 'userId': ?1}",
+      fields =
+          "{'_id': 1, 'displayName': 1, 'status': 1, 'createdAt': 1, 'updatedAt': 1, 'derived': 1, 'resume.parsed.yearsOfExperience': 1}")
+  Optional<ProfileSummaryView> findSummaryByIdAndUserId(String id, String userId);
+
   Optional<Profile> findByUserIdAndDisplayName(String userId, String displayName);
 
   Optional<Profile> findByIdAndUserId(String id, String userId);
