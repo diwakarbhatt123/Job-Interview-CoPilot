@@ -2,6 +2,7 @@ package com.jobcopilot.profile_service.controller;
 
 import com.jobcopilot.profile_service.enums.SourceType;
 import com.jobcopilot.profile_service.exception.ProfileAlreadyExistsException;
+import com.jobcopilot.profile_service.exception.ProfileNotFoundException;
 import com.jobcopilot.profile_service.model.request.CreateProfileRequest;
 import com.jobcopilot.profile_service.model.response.ErrorResponse;
 import com.jobcopilot.profile_service.model.response.ProfileStatusResponse;
@@ -46,15 +47,21 @@ public class ProfileController {
         new ProfilesResponse(profileSummaryResponses, profileSummaryResponses.size()));
   }
 
+  @GetMapping("/{profileId}")
+  public ResponseEntity<ProfileSummaryResponse> getProfile(
+      @RequestHeader("X-User-Id") String userId, @PathVariable("profileId") String profileId) {
+    log.info("Received request to get profile for userId: {} and profileId: {}", userId, profileId);
+    return ResponseEntity.ok(profileService.getProfile(userId, profileId));
+  }
+
   @PostMapping
   public ResponseEntity<ProfileStatusResponse> createProfile(
       @RequestBody @Valid CreateProfileRequest createProfileRequest,
       @RequestHeader("X-User-Id") String userId) {
     log.info(
-        "Received request to create profile for userId: {} with displayName: {} and pasted cv {}",
+        "Received request to create profile for userId: {} with displayName: {}",
         userId,
-        createProfileRequest.displayName(),
-        createProfileRequest.pastedCV());
+        createProfileRequest.displayName());
     ProfileStatusResponse profileStatusResponse =
         profileService.createProfile(createProfileRequest, userId);
     return ResponseEntity.status(HttpStatus.CREATED).body(profileStatusResponse);
@@ -102,6 +109,13 @@ public class ProfileController {
     log.error("Profile creation failed: {}", ex.getMessage(), ex);
     ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
     return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+  }
+
+  @ExceptionHandler(ProfileNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handleProfileNotFoundException(ProfileNotFoundException ex) {
+    log.error("Profile not found: {}", ex.getMessage(), ex);
+    ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
   }
 
   @ExceptionHandler(Exception.class)

@@ -4,6 +4,7 @@ import com.jobcopilot.profile_service.entity.Profile;
 import com.jobcopilot.profile_service.entity.values.Derived;
 import com.jobcopilot.profile_service.enums.ProfileStatus;
 import com.jobcopilot.profile_service.exception.ProfileAlreadyExistsException;
+import com.jobcopilot.profile_service.exception.ProfileNotFoundException;
 import com.jobcopilot.profile_service.model.request.CreateProfileRequest;
 import com.jobcopilot.profile_service.model.response.ProfileStatusResponse;
 import com.jobcopilot.profile_service.model.response.ProfileSummaryResponse;
@@ -98,6 +99,13 @@ public class ProfileService {
             Comparator.comparing(
                 ProfileSummaryResponse::updated, Comparator.nullsLast(Comparator.reverseOrder())))
         .collect(Collectors.toList());
+  }
+
+  public ProfileSummaryResponse getProfile(String userId, String profileId) {
+    return profileRepository
+        .findSummaryByIdAndUserId(profileId, userId)
+        .map(this::toProfileSummary)
+        .orElseThrow(() -> new ProfileNotFoundException(profileId));
   }
 
   private ProfileSummaryResponse toProfileSummary(ProfileSummaryView profile) {

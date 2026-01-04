@@ -1,17 +1,7 @@
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
+import { Profile } from '@/types/Profile'
 import Link from 'next/link'
-
-type Profile = {
-  id: string
-  displayName: string
-  summary?: {
-    yearsOfExperience?: number
-    experienceLevel?: string
-    skills?: string[]
-    domain?: string
-  }
-}
 
 function prettyExperience(level?: string) {
   if (!level) return ''
