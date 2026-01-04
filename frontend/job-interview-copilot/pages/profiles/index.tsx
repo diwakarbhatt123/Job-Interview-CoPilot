@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { Profile } from '@/types/Profile'
 import Link from 'next/link'
 
-
 function prettyExperience(level?: string) {
   if (!level) return ''
   const normalized = level
