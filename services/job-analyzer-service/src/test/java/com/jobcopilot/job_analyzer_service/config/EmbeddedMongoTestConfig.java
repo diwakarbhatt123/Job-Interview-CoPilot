@@ -32,7 +32,7 @@ public class EmbeddedMongoTestConfig {
     if (running == null) {
       Net net = Net.of("localhost", findFreePort(), false);
       Transition<Net> netTransition = Start.to(Net.class).initializedWith(net);
-      running = Mongod.builder().net(netTransition).build().start(Version.Main.V6_0);
+      running = Mongod.builder().net(netTransition).build().start(Version.V6_0_5);
     }
     return running;
   }
