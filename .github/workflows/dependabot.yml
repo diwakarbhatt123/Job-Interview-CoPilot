@@ -1,16 +1,56 @@
-name: Auto-merge Dependabot
-on: pull_request
+name: Dependabot auto-approve + auto-merge
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
 
 permissions:
-  pull-requests: write
   contents: write
+  pull-requests: write
 
 jobs:
-  automerge:
-    runs-on: ubuntu-latest
+  dependabot:
     if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+
     steps:
-      - uses: peter-evans/enable-pull-request-automerge@v3
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # OPTIONAL: restrict which updates get auto-merged (recommended)
+      # - Patch only, OR minor for dev deps, etc.
+      - name: Decide whether to auto-merge
+        id: gate
+        run: |
+          echo "update_type=${{ steps.metadata.outputs.update-type }}" >> $GITHUB_OUTPUT
+          echo "dependency_type=${{ steps.metadata.outputs.dependency-type }}" >> $GITHUB_OUTPUT
+
+      - name: Auto-approve
+        if: |
+          steps.gate.outputs.update_type == 'version-update:semver-patch' ||
+          (steps.gate.outputs.update_type == 'version-update:semver-minor' && steps.gate.outputs.dependency_type == 'direct:development')
+        uses: peter-evans/approve-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           pull-request-number: ${{ github.event.pull_request.number }}
-          merge-method: squash
+
+      - name: Enable auto-merge (squash)
+        if: |
+          steps.gate.outputs.update_type == 'version-update:semver-patch' ||
+          (steps.gate.outputs.update_type == 'version-update:semver-minor' && steps.gate.outputs.dependency_type == 'direct:development')
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            await github.graphql(`
+              mutation($pullRequestId: ID!) {
+                enablePullRequestAutoMerge(input: {
+                  pullRequestId: $pullRequestId,
+                  mergeMethod: SQUASH
+                }) { pullRequest { number } }
+              }
+            `, { pullRequestId: pr.node_id });
