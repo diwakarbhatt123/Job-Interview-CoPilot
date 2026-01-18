@@ -1,6 +1,10 @@
 spring:
   application:
     name: job-analyzer-service
+  data:
+    mongodb:
+      database: job_analyzer_service
+      auto-index-creation: true
 
 server:
     port: 8083
