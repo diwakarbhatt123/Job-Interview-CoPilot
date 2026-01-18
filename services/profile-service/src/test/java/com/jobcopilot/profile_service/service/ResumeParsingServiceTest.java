@@ -1,7 +1,6 @@
 package com.jobcopilot.profile_service.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -10,6 +9,7 @@ import com.jobcopilot.profile_service.entity.Profile;
 import com.jobcopilot.profile_service.enums.ProfileStatus;
 import com.jobcopilot.profile_service.enums.SourceType;
 import com.jobcopilot.profile_service.parser.ParsingPipeline;
+import com.jobcopilot.profile_service.parser.PipelineBuilder;
 import com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput;
 import com.jobcopilot.profile_service.parser.model.output.ExperienceExtractedOutput;
 import com.jobcopilot.profile_service.parser.model.response.PipelineResponse;
@@ -28,16 +28,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ResumeParsingServiceTest {
 
   @Mock private ParsingPipeline resumeParsingPipeline;
-  @Mock private ParsingPipeline resumePdfParsingPipeline;
   @Mock private ProfileRepository profileRepository;
 
   private ResumeParsingService resumeParsingService;
 
   @org.junit.jupiter.api.BeforeEach
   void setUp() {
-    resumeParsingService =
-        new ResumeParsingService(
-            resumeParsingPipeline, resumePdfParsingPipeline, profileRepository);
+    // per-test setup
   }
 
   @Test
@@ -65,7 +62,13 @@ class ResumeParsingServiceTest {
                         "Uni", "BSc", null, null, null, List.of())))
             .build();
 
-    when(resumeParsingPipeline.execute(any())).thenReturn(response);
+    ParsingPipeline resumeParsingPipeline =
+        PipelineBuilder.init().addStage(input -> response).build();
+    ParsingPipeline resumePdfParsingPipeline =
+        PipelineBuilder.init().addStage(input -> response).build();
+    resumeParsingService =
+        new ResumeParsingService(
+            resumeParsingPipeline, resumePdfParsingPipeline, profileRepository);
     resumeParsingService.parseResume("resume text", "profile-1", Instant.now());
 
     ArgumentCaptor<Profile> captor = ArgumentCaptor.forClass(Profile.class);
@@ -89,7 +92,13 @@ class ResumeParsingServiceTest {
     PipelineResponse response =
         PipelineResponse.builder().rawText("raw").normalizedText("normalized").build();
 
-    when(resumePdfParsingPipeline.execute(any())).thenReturn(response);
+    ParsingPipeline resumeParsingPipeline =
+        PipelineBuilder.init().addStage(input -> response).build();
+    ParsingPipeline resumePdfParsingPipeline =
+        PipelineBuilder.init().addStage(input -> response).build();
+    resumeParsingService =
+        new ResumeParsingService(
+            resumeParsingPipeline, resumePdfParsingPipeline, profileRepository);
     resumeParsingService.parseResumeFile(
         new byte[] {0x25, 0x50, 0x44, 0x46},
         "resume.pdf",
