@@ -1,4 +1,4 @@
-package com.jobcopilot.profile_service.config;
+package com.jobcopilot.job_analyzer_service.config;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -6,11 +6,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Configuration(proxyBeanMethods = false)
+@Profile("!test")
 @EnableMongoAuditing
 public class MongoConfiguration {
 

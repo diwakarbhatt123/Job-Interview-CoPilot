@@ -46,6 +46,17 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.12.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    constraints {
+        implementation("org.apache.logging.log4j:log4j-core:2.25.3") {
+            because("CVE-2025-68161: fix TLS hostname verification in SocketAppender")
+        }
+        implementation("org.eclipse.jgit:org.eclipse.jgit:7.2.1.202505142326-r") {
+            because("CVE-2025-4949: XXE in ManifestParser/AmazonS3 transport")
+        }
+        implementation("com.fasterxml.jackson.core:jackson-core:2.15.0") {
+            because("CVE-2025-52999: avoid StackoverflowError on deeply nested input")
+        }
+    }
 }
 
 tasks.withType<Test> {
