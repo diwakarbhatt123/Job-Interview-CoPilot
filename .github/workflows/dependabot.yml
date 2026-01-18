@@ -36,14 +36,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           pull-request-number: ${{ github.event.pull_request.number }}
-
-      - name: Enable auto-merge (squash)
-        # if: |
-        #   steps.gate.outputs.update_type == 'version-update:semver-patch' ||
-        #   (steps.gate.outputs.update_type == 'version-update:semver-minor' && steps.gate.outputs.dependency_type == 'direct:development')
-        
-        uses: peter-evans/enable-pull-request-automerge@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ github.event.pull_request.number }}
           merge-method: squash
