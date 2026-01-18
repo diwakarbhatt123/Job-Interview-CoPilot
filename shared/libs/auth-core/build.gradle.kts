@@ -27,7 +27,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.42")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.13.0")
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation(platform("org.junit:junit-bom:6.0.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
