@@ -6,7 +6,7 @@ plugins {
     id("org.springframework.boot") version "4.0.0"
     id("io.spring.dependency-management") version "1.1.7"
     id("com.diffplug.spotless") version "6.25.0"
-    id("com.github.spotbugs") version "6.0.26"
+    id("com.github.spotbugs") version "6.4.8"
 }
 
 group = "com.jobcopilot"
