@@ -6,6 +6,26 @@
 version: 2
 updates:
   - package-ecosystem: "gradle" # See documentation for possible values
-    directory: "/" # Location of package manifests
+    directory: "/services/account-service" # Location of package manifests
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "gradle" # See documentation for possible values
+    directory: "/services/fit-score-service" # Location of package manifests
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "gradle" # See documentation for possible values
+    directory: "/services/job-analyzer-service" # Location of package manifests
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "gradle" # See documentation for possible values
+    directory: "/services/prep-plan-service" # Location of package manifests
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "gradle" # See documentation for possible values
+    directory: "/services/profile-service" # Location of package manifests
     schedule:
       interval: "weekly"
