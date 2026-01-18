@@ -10,9 +10,9 @@ permissions:
 
 jobs:
   dependabot:
-    if: github.actor == 'dependabot[bot]'
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Fetch Dependabot metadata
         id: metadata
@@ -20,37 +20,20 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      # OPTIONAL: restrict which updates get auto-merged (recommended)
-      # - Patch only, OR minor for dev deps, etc.
-      - name: Decide whether to auto-merge
-        id: gate
-        run: |
-          echo "update_type=${{ steps.metadata.outputs.update-type }}" >> $GITHUB_OUTPUT
-          echo "dependency_type=${{ steps.metadata.outputs.dependency-type }}" >> $GITHUB_OUTPUT
+      # # OPTIONAL: restrict which updates get auto-merged (recommended)
+      # # - Patch only, OR minor for dev deps, etc.
+      # - name: Decide whether to auto-merge
+      #   id: gate
+      #   run: |
+      #     echo "update_type=${{ steps.metadata.outputs.update-type }}" >> $GITHUB_OUTPUT
+      #     echo "dependency_type=${{ steps.metadata.outputs.dependency-type }}" >> $GITHUB_OUTPUT
 
       - name: Auto-approve
-        if: |
-          steps.gate.outputs.update_type == 'version-update:semver-patch' ||
-          (steps.gate.outputs.update_type == 'version-update:semver-minor' && steps.gate.outputs.dependency_type == 'direct:development')
-        uses: peter-evans/approve-pull-request@v4
+        # if: |
+        #   steps.gate.outputs.update_type == 'version-update:semver-patch' ||
+        #   (steps.gate.outputs.update_type == 'version-update:semver-minor' && steps.gate.outputs.dependency_type == 'direct:development')
+        uses: peter-evans/enable-pull-request-automerge@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           pull-request-number: ${{ github.event.pull_request.number }}
-
-      - name: Enable auto-merge (squash)
-        if: |
-          steps.gate.outputs.update_type == 'version-update:semver-patch' ||
-          (steps.gate.outputs.update_type == 'version-update:semver-minor' && steps.gate.outputs.dependency_type == 'direct:development')
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const pr = context.payload.pull_request;
-            await github.graphql(`
-              mutation($pullRequestId: ID!) {
-                enablePullRequestAutoMerge(input: {
-                  pullRequestId: $pullRequestId,
-                  mergeMethod: SQUASH
-                }) { pullRequest { number } }
-              }
-            `, { pullRequestId: pr.node_id });
+          merge-method: squash
