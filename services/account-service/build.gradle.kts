@@ -5,8 +5,8 @@ plugins {
     java
     id("org.springframework.boot") version "4.0.1"
     id("io.spring.dependency-management") version "1.1.7"
-    id("com.diffplug.spotless") version "6.25.0"
-    id("com.github.spotbugs") version "6.0.26"
+    id("com.github.spotbugs") version "6.4.8"
+    id("com.diffplug.spotless") version "8.1.0"
 }
 
 group = "com.jobcopilot"
@@ -57,7 +57,7 @@ dependencies {
         implementation("org.eclipse.jgit:org.eclipse.jgit:7.2.1.202505142326-r") {
             because("CVE-2025-4949: XXE in ManifestParser/AmazonS3 transport")
         }
-        implementation("com.fasterxml.jackson.core:jackson-core:2.15.0") {
+        implementation("com.fasterxml.jackson.core:jackson-core:2.20.1") {
             because("CVE-2025-52999: avoid StackoverflowError on deeply nested input")
         }
     }
