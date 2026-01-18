@@ -10,7 +10,6 @@ import com.jobcopilot.profile_service.parser.model.request.PDFAnalysisPipelineRe
 import com.jobcopilot.profile_service.parser.model.request.PlainTextAnalysisPipelineRequest;
 import com.jobcopilot.profile_service.parser.model.response.PipelineResponse;
 import com.jobcopilot.profile_service.repository.ProfileRepository;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.time.Instant;
 import java.time.Year;
 import java.util.stream.Collectors;
@@ -27,15 +26,12 @@ public class ResumeParsingService {
   private final ProfileRepository profileRepository;
 
   @Autowired
-  @SuppressFBWarnings(
-      value = "EI_EXPOSE_REP2",
-      justification = "ParsingPipeline instances are immutable and shared safely.")
   public ResumeParsingService(
       ParsingPipeline resumeParsingPipeline,
       ParsingPipeline resumePdfParsingPipeline,
       ProfileRepository profileRepository) {
-    this.resumeParsingPipeline = resumeParsingPipeline;
-    this.resumePdfParsingPipeline = resumePdfParsingPipeline;
+    this.resumeParsingPipeline = new ParsingPipeline(resumeParsingPipeline);
+    this.resumePdfParsingPipeline = new ParsingPipeline(resumePdfParsingPipeline);
     this.profileRepository = profileRepository;
   }
 
