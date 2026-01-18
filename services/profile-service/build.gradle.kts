@@ -44,7 +44,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-webmvc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
-    testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.12.0")
+    testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.23.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     constraints {
         implementation("org.apache.logging.log4j:log4j-core:2.25.3") {
