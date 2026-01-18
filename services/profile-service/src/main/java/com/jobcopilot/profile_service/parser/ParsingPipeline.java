@@ -24,6 +24,13 @@ public class ParsingPipeline implements AutoCloseable {
     this.executor = executor;
   }
 
+  public ParsingPipeline(ParsingPipeline other) {
+    this.executor = other.executor;
+    if (other.stages != null) {
+      this.stages.addAll(other.stages);
+    }
+  }
+
   public void addStage(PipelineStage stage) {
     this.stages.add(stage);
   }
