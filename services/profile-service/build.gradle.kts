@@ -6,7 +6,7 @@ plugins {
 	id("org.springframework.boot") version "4.0.0"
 	id("io.spring.dependency-management") version "1.1.7"
     id("com.diffplug.spotless") version "6.25.0"
-    id("com.github.spotbugs") version "6.0.26"
+    id("com.github.spotbugs") version "6.4.8"
 }
 
 group = "com.jobcopilot"
@@ -44,7 +44,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-webmvc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
-    testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.12.0")
+    testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.23.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     constraints {
         implementation("org.apache.logging.log4j:log4j-core:2.25.3") {
