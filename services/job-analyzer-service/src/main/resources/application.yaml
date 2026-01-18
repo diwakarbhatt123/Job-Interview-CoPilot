@@ -14,3 +14,6 @@ management:
     web:
       exposure:
         include: health,info
+
+profile-service:
+  base-url: ${PROFILE_SERVICE_BASE_URL:http://localhost:8085}
