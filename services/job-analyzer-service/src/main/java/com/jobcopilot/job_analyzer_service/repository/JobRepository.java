@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface JobRepository extends MongoRepository<Job, String> {
+public interface JobRepository extends MongoRepository<Job, String>, JobRepositoryCustom {
   Optional<Job> findByUserIdAndProfileId(String userId, String profileId);
 
   List<Job> findByAnalysis_Status(AnalysisStatus status);
