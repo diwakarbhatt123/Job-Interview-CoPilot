@@ -43,7 +43,7 @@ export default function RegisterPage() {
       } else {
         setError('Something went Wrong! Please try again.')
       }
-    } catch (_error) {
+    } catch {
       setError('Network error. Please try again.')
     } finally {
       setLoading(false)
