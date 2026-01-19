@@ -4,8 +4,8 @@ import org.gradle.kotlin.dsl.withType
 
 plugins {
     id("java")
-    id("com.diffplug.spotless") version "6.25.0"
-    id("com.github.spotbugs") version "6.0.26"
+    id("com.diffplug.spotless") version "8.1.0"
+    id("com.github.spotbugs") version "6.4.8"
 }
 
 group = "org.jobcopilot"
@@ -27,7 +27,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.42")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.13.0")
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation(platform("org.junit:junit-bom:6.0.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
