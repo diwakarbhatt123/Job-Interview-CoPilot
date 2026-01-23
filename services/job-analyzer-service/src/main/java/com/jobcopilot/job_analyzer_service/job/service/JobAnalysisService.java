@@ -22,15 +22,26 @@ public class JobAnalysisService {
     log.info("Starting job analysis for job {}", job.getId());
     Instant now = Instant.now();
     try {
-      // Stubbed analysis for M3.3.
-      jobRepository.markCompleted(job.getId(), now);
-      log.info("Completed job analysis for job {}", job.getId());
+      completeJob(job, now);
     } catch (RuntimeException ex) {
-      Error error =
-          new Error(
-              ErrorCode.PARSER_FAILED, ex.getMessage(), "Job analysis processing failed", false);
-      jobRepository.markFailed(job.getId(), now, error);
-      log.error("Failed job analysis for job {}", job.getId(), ex);
+      handleFailure(job, now, ex);
     }
+  }
+
+  private void completeJob(Job job, Instant completedAt) {
+    // Stubbed analysis for M3.3.
+    jobRepository.markCompleted(job.getId(), completedAt);
+    log.info("Completed job analysis for job {}", job.getId());
+  }
+
+  private void handleFailure(Job job, Instant failedAt, RuntimeException ex) {
+    Error error = buildError(ex);
+    jobRepository.markFailed(job.getId(), failedAt, error);
+    log.error("Failed job analysis for job {}", job.getId(), ex);
+  }
+
+  private Error buildError(RuntimeException ex) {
+    return new Error(
+        ErrorCode.PARSER_FAILED, ex.getMessage(), "Job analysis processing failed", false);
   }
 }
