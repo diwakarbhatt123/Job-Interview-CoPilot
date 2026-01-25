@@ -16,7 +16,7 @@
   "dependencies": {
     "@eslint/eslintrc": "^3.3.3",
     "formidable": "^3.5.2",
-    "next": "16.1.0",
+    "next": "16.1.4",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
