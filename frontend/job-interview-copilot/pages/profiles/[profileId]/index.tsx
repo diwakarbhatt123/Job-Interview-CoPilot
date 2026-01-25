@@ -139,9 +139,9 @@ export default function ProfileDashboard() {
 
   const [profile, setProfile] = useState<Profile>()
 
-  const [analysedJobs, setAnalysedJobs] = useState<AnalysedJob[]>([])
-  const [applications, setApplications] = useState<Application[]>([])
-  const [prepPlans, setPrepPlans] = useState<PrepPlan[]>([])
+  const [analysedJobs] = useState<AnalysedJob[]>([])
+  const [applications] = useState<Application[]>([])
+  const [prepPlans] = useState<PrepPlan[]>([])
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
