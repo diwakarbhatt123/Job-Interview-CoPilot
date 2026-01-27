@@ -23,17 +23,10 @@ public class JobAnalysisService {
   }
 
   public JobAnalysisResponse submitJobAnalysis(SubmitJobAnalysisRequest request, String userId) {
-    if (!profileOwnershipService.isOwnedByUser(request.profileId(), userId)) {
-      throw new ProfileOwnershipException(request.profileId());
-    }
-    final Job job = jobRepository.save(toJobEntity(request, userId));
+    validateOwnership(request.profileId(), userId);
+    Job job = jobRepository.save(toJobEntity(request, userId));
 
-    return JobAnalysisResponse.builder()
-        .jobId(job.getId())
-        .status(job.getAnalysis().status())
-        .submittedAt(job.getInput().submittedAt())
-        .profileId(request.profileId())
-        .build();
+    return toResponse(job, request.profileId());
   }
 
   private Job toJobEntity(SubmitJobAnalysisRequest request, String userId) {
@@ -48,6 +41,21 @@ public class JobAnalysisService {
                 .submittedAt(Instant.now())
                 .build())
         .analysis(Analysis.builder().status(AnalysisStatus.PENDING).build())
+        .build();
+  }
+
+  private void validateOwnership(String profileId, String userId) {
+    if (!profileOwnershipService.isOwnedByUser(profileId, userId)) {
+      throw new ProfileOwnershipException(profileId);
+    }
+  }
+
+  private JobAnalysisResponse toResponse(Job job, String profileId) {
+    return JobAnalysisResponse.builder()
+        .jobId(job.getId())
+        .status(job.getAnalysis().status())
+        .submittedAt(job.getInput().submittedAt())
+        .profileId(profileId)
         .build();
   }
 }

@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
   private static final String USER_ID_HEADER = "X-User-Id";
   private static final String AUTH_TOKEN_COOKIE_NAME = "AuthToken";
+  private static final String BEARER_PREFIX = "^Bearer ";
+  private static final String INVALID_CREDENTIALS_MESSAGE = "Invalid email or password";
 
   private final UserRegistrationService userRegistrationService;
   private final UserLoginService userLoginService;
@@ -67,11 +69,7 @@ public class AuthController {
     log.info("Received request to login user with email: {}", userLoginRequest.email());
     AuthenticationResult authenticationResult = userLoginService.authenticateUser(userLoginRequest);
 
-    Cookie cookie = new Cookie(AUTH_TOKEN_COOKIE_NAME, authenticationResult.token());
-    cookie.setHttpOnly(true);
-    cookie.setPath("/");
-    cookie.setMaxAge(Long.valueOf(tokenConfig.expirationSeconds()).intValue());
-    response.addCookie(cookie);
+    response.addCookie(buildAuthCookie(authenticationResult.token()));
 
     LoginResponse loginResponse = new LoginResponse(authenticationResult.userId().toString());
 
@@ -85,7 +83,7 @@ public class AuthController {
     if (authenticationToken == null || authenticationToken.isBlank()) {
       throw new BadCredentialsException("Missing or empty Authorization header");
     }
-    authenticationToken = authenticationToken.trim().replaceFirst("^Bearer ", "");
+    authenticationToken = sanitizeBearerToken(authenticationToken);
     String userId = userLoginService.authenticateUserToken(authenticationToken);
     log.info("Authenticated user {}", userId);
     return ResponseEntity.ok().header(USER_ID_HEADER, userId).build();
@@ -109,19 +107,10 @@ public class AuthController {
       BadCredentialsException ex, HttpServletRequest request, HttpServletResponse response) {
     log.error("Authentication failed: {}", ex.getMessage(), ex);
 
-    if (request.getCookies() != null) {
-      Arrays.stream(request.getCookies())
-          .filter(cookie -> cookie.getName().equals(AUTH_TOKEN_COOKIE_NAME))
-          .findFirst()
-          .ifPresent(
-              cookie -> {
-                cookie.setMaxAge(0);
-                response.addCookie(cookie);
-              });
-    }
+    clearAuthCookie(request, response);
 
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-        .body(new ErrorResponse("Invalid email or password"));
+        .body(new ErrorResponse(INVALID_CREDENTIALS_MESSAGE));
   }
 
   @ExceptionHandler(InvalidTokenException.class)
@@ -136,5 +125,31 @@ public class AuthController {
     log.error("Internal server error: {}", ex.getMessage(), ex);
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(new ErrorResponse("An unexpected error occurred."));
+  }
+
+  private Cookie buildAuthCookie(String token) {
+    Cookie cookie = new Cookie(AUTH_TOKEN_COOKIE_NAME, token);
+    cookie.setHttpOnly(true);
+    cookie.setPath("/");
+    cookie.setMaxAge(Math.toIntExact(tokenConfig.expirationSeconds()));
+    return cookie;
+  }
+
+  private String sanitizeBearerToken(String authenticationToken) {
+    return authenticationToken.trim().replaceFirst(BEARER_PREFIX, "");
+  }
+
+  private void clearAuthCookie(HttpServletRequest request, HttpServletResponse response) {
+    if (request.getCookies() == null) {
+      return;
+    }
+    Arrays.stream(request.getCookies())
+        .filter(cookie -> cookie.getName().equals(AUTH_TOKEN_COOKIE_NAME))
+        .findFirst()
+        .ifPresent(
+            cookie -> {
+              cookie.setMaxAge(0);
+              response.addCookie(cookie);
+            });
   }
 }

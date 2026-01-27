@@ -1,6 +1,7 @@
 package com.jobcopilot.job_analyzer_service.job;
 
 import com.jobcopilot.job_analyzer_service.job.service.JobAnalysisService;
+import com.jobcopilot.job_analyzer_service.entity.Job;
 import com.jobcopilot.job_analyzer_service.repository.JobRepository;
 import java.time.Instant;
 import java.util.concurrent.ExecutorService;
@@ -37,18 +38,29 @@ public class PendingJobAnalysisPoller {
 
   @Scheduled(fixedRateString = "${poller.intervalMs:30000}")
   private void getPendingJob() {
-    if (executor instanceof ThreadPoolExecutor threadPool) {
-      if (threadPool.getQueue().remainingCapacity() == 0) {
-        log.warn("Job analysis queue is full. Skipping poll cycle.");
-        return;
-      }
+    if (isQueueFull()) {
+      return;
     }
     Instant now = Instant.now();
     Instant lockExpiry = now.minusMillis(lockTtlMs);
     jobRepository
         .acquirePendingJob(pollerId, now, lockExpiry, maxAttempts)
         .ifPresentOrElse(
-            job -> executor.submit(() -> jobAnalysisService.analyseJob(job)),
+            this::submitJob,
             () -> log.debug("No pending job found"));
+  }
+
+  private boolean isQueueFull() {
+    if (executor instanceof ThreadPoolExecutor threadPool) {
+      if (threadPool.getQueue().remainingCapacity() == 0) {
+        log.warn("Job analysis queue is full. Skipping poll cycle.");
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private void submitJob(Job job) {
+    executor.submit(() -> jobAnalysisService.analyseJob(job));
   }
 }

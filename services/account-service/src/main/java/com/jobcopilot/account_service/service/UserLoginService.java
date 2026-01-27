@@ -16,6 +16,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserLoginService {
+  private static final String INVALID_CREDENTIALS_MESSAGE = "Invalid email or password";
+  private static final String INVALID_TOKEN_ISSUER_MESSAGE = "Invalid token issuer";
+  private static final String EXPIRED_TOKEN_MESSAGE = "Token has expired";
+  private static final String USER_DOES_NOT_EXIST_MESSAGE = "User does not exist";
 
   private final String issuer;
 
@@ -39,35 +43,39 @@ public class UserLoginService {
   }
 
   public AuthenticationResult authenticateUser(UserLoginRequest userLoginRequest) {
+    final String email = normalizeEmail(userLoginRequest.email());
     return userRepository
-        .findByEmail(userLoginRequest.email().toLowerCase().trim())
+        .findByEmail(email)
         .map(
             user -> {
               if (passwordEncoder.matches(userLoginRequest.password(), user.getPasswordHash())) {
                 String token = tokenGenerator.generateToken(user.getUserId().toString());
                 return new AuthenticationResult(token, user.getUserId());
-              } else {
-                throw new BadCredentialsException("Invalid email or password");
               }
+              throw new BadCredentialsException(INVALID_CREDENTIALS_MESSAGE);
             })
-        .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
+        .orElseThrow(() -> new BadCredentialsException(INVALID_CREDENTIALS_MESSAGE));
   }
 
   public String authenticateUserToken(String authenticationToken) {
     ValidatedToken validatedToken = tokenValidator.validateAndDecodeToken(authenticationToken);
 
     if (!issuer.equals(validatedToken.issuer())) {
-      throw new BadCredentialsException("Invalid token issuer");
+      throw new BadCredentialsException(INVALID_TOKEN_ISSUER_MESSAGE);
     }
 
     if (validatedToken.expiresAt().isBefore(Instant.now())) {
-      throw new BadCredentialsException("Token has expired");
+      throw new BadCredentialsException(EXPIRED_TOKEN_MESSAGE);
     }
 
     if (!userRepository.existsByUserId(UUID.fromString(validatedToken.subject()))) {
-      throw new BadCredentialsException("User does not exist");
+      throw new BadCredentialsException(USER_DOES_NOT_EXIST_MESSAGE);
     }
 
     return validatedToken.subject();
+  }
+
+  private String normalizeEmail(String email) {
+    return email.toLowerCase().trim();
   }
 }

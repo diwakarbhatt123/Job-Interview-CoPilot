@@ -22,7 +22,7 @@ public class UserRegistrationService {
   }
 
   public void registerUser(UserRegistrationRequest userRegistrationRequest) {
-    final String email = userRegistrationRequest.email().toLowerCase().trim();
+    final String email = normalizeEmail(userRegistrationRequest.email());
     userRepository
         .findByEmail(email)
         .ifPresentOrElse(
@@ -30,18 +30,22 @@ public class UserRegistrationService {
               throw new UserExistsException(userRegistrationRequest.email());
             },
             () -> {
-              final String password = userRegistrationRequest.password();
-              final String encodedPassword = passwordEncoder.encode(password);
-
-              final User newUser =
-                  User.builder()
-                      .userId(UUID.randomUUID())
-                      .email(email)
-                      .passwordHash(encodedPassword)
-                      .active(true)
-                      .build();
-
-              userRepository.save(newUser);
+              userRepository.save(buildUser(userRegistrationRequest, email));
             });
+  }
+
+  private String normalizeEmail(String email) {
+    return email.toLowerCase().trim();
+  }
+
+  private User buildUser(UserRegistrationRequest userRegistrationRequest, String email) {
+    final String encodedPassword = passwordEncoder.encode(userRegistrationRequest.password());
+
+    return User.builder()
+        .userId(UUID.randomUUID())
+        .email(email)
+        .passwordHash(encodedPassword)
+        .active(true)
+        .build();
   }
 }
