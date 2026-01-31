@@ -1,14 +1,14 @@
 package com.jobcopilot.profile_service.service;
 
+import com.jobcopilot.parser.ParsingPipeline;
+import com.jobcopilot.parser.model.request.PDFAnalysisPipelineRequest;
+import com.jobcopilot.parser.model.request.PlainTextAnalysisPipelineRequest;
+import com.jobcopilot.parser.model.response.PipelineResponse;
 import com.jobcopilot.profile_service.entity.values.*;
 import com.jobcopilot.profile_service.enums.Domain;
 import com.jobcopilot.profile_service.enums.ExperienceLevel;
 import com.jobcopilot.profile_service.enums.ProfileStatus;
 import com.jobcopilot.profile_service.enums.SourceType;
-import com.jobcopilot.profile_service.parser.ParsingPipeline;
-import com.jobcopilot.profile_service.parser.model.request.PDFAnalysisPipelineRequest;
-import com.jobcopilot.profile_service.parser.model.request.PlainTextAnalysisPipelineRequest;
-import com.jobcopilot.profile_service.parser.model.response.PipelineResponse;
 import com.jobcopilot.profile_service.repository.ProfileRepository;
 import java.time.Instant;
 import java.time.Year;

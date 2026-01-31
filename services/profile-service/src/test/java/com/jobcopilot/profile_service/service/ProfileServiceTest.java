@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
+import com.jobcopilot.parser.dictionary.Skill;
 import com.jobcopilot.profile_service.entity.Profile;
 import com.jobcopilot.profile_service.entity.values.Derived;
 import com.jobcopilot.profile_service.enums.ProfileStatus;
@@ -13,7 +14,6 @@ import com.jobcopilot.profile_service.exception.ProfileAlreadyExistsException;
 import com.jobcopilot.profile_service.model.request.CreateProfileRequest;
 import com.jobcopilot.profile_service.model.response.ProfileStatusResponse;
 import com.jobcopilot.profile_service.model.response.ProfileSummaryResponse;
-import com.jobcopilot.profile_service.parser.dictionary.Skill;
 import com.jobcopilot.profile_service.repository.ProfileRepository;
 import com.jobcopilot.profile_service.repository.ProfileSummaryView;
 import java.time.Instant;

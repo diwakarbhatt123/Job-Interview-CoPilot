@@ -1,11 +1,12 @@
 package com.jobcopilot.profile_service.parser.stages;
 
-import com.jobcopilot.profile_service.parser.dictionary.ResumeSection;
-import com.jobcopilot.profile_service.parser.model.input.StageInput;
-import com.jobcopilot.profile_service.parser.model.output.NormalizedTextOutput;
-import com.jobcopilot.profile_service.parser.model.output.SectionizedOutput;
-import com.jobcopilot.profile_service.parser.model.output.StageOutput;
-import com.jobcopilot.profile_service.parser.utils.ParsingUtils;
+import com.jobcopilot.parser.dictionary.ResumeSection;
+import com.jobcopilot.parser.model.input.StageInput;
+import com.jobcopilot.parser.model.output.NormalizedTextOutput;
+import com.jobcopilot.parser.model.output.SectionizedOutput;
+import com.jobcopilot.parser.model.output.StageOutput;
+import com.jobcopilot.parser.stages.PipelineStage;
+import com.jobcopilot.parser.utils.ParsingUtils;
 import java.util.ArrayList;
 import java.util.List;
 

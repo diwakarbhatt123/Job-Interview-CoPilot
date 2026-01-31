@@ -1,10 +1,11 @@
 package com.jobcopilot.profile_service.parser.stages;
 
-import com.jobcopilot.profile_service.parser.dictionary.ResumeSection;
-import com.jobcopilot.profile_service.parser.model.input.StageInput;
-import com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput;
-import com.jobcopilot.profile_service.parser.model.output.SectionizedOutput;
-import com.jobcopilot.profile_service.parser.model.output.StageOutput;
+import com.jobcopilot.parser.dictionary.ResumeSection;
+import com.jobcopilot.parser.model.input.StageInput;
+import com.jobcopilot.parser.model.output.EducationExtractedOutput;
+import com.jobcopilot.parser.model.output.SectionizedOutput;
+import com.jobcopilot.parser.model.output.StageOutput;
+import com.jobcopilot.parser.stages.PipelineStage;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -69,8 +70,7 @@ public class EducationExtractor implements PipelineStage {
 
     EducationExtractedOutput.EducationEntryBuilder current = null;
 
-    for (int i = 0; i < lines.size(); i++) {
-      String raw = lines.get(i);
+    for (String raw : lines) {
       if (raw == null) continue;
 
       String line = raw.trim();
@@ -111,17 +111,6 @@ public class EducationExtractor implements PipelineStage {
 
     // Post-process entries: parse fields from each entry's lines
     return out.stream().map(this::enrich).collect(Collectors.toList());
-  }
-
-  private boolean isLikelyEntryStart(String line) {
-    // Strong signals
-    if (DEGREE_KEYWORDS.matcher(line).find()) return true;
-    if (YEAR_RANGE.matcher(line).find()) return true;
-
-    // Medium signals
-    if (INSTITUTION_HINT.matcher(line).find() && looksTitleish(line)) return true;
-
-    return false;
   }
 
   private EducationExtractedOutput.EducationEntry enrich(
@@ -262,7 +251,7 @@ public class EducationExtractor implements PipelineStage {
     s = s.replaceAll("\\b(19\\d{2}|20\\d{2})\\b", "").trim();
     if (degree != null) s = s.replace(degree, "").trim();
     if (field != null && !field.isBlank()) s = s.replace(field, "").trim();
-    s = s.replaceAll("[\\(\\)\\[\\],;:|]+", " ").replaceAll("\\s{2,}", " ").trim();
+    s = s.replaceAll("[()\\[\\],;:|]+", " ").replaceAll("\\s{2,}", " ").trim();
     return s;
   }
 
