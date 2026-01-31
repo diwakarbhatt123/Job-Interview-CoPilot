@@ -4,7 +4,7 @@ import org.gradle.kotlin.dsl.withType
 
 plugins {
     id("java")
-    id("com.diffplug.spotless") version "8.1.0"
+    id("com.diffplug.spotless") version "8.2.1"
     id("com.github.spotbugs") version "6.4.8"
 }
 
