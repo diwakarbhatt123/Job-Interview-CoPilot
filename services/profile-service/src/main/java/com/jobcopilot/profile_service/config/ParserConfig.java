@@ -1,7 +1,7 @@
 package com.jobcopilot.profile_service.config;
 
-import com.jobcopilot.profile_service.parser.ParsingPipeline;
-import com.jobcopilot.profile_service.parser.PipelineBuilder;
+import com.jobcopilot.parser.ParsingPipeline;
+import com.jobcopilot.parser.PipelineBuilder;
 import com.jobcopilot.profile_service.parser.stages.*;
 import java.util.concurrent.ExecutorService;
 import org.springframework.beans.factory.annotation.Qualifier;

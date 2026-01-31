@@ -1,9 +1,10 @@
 package com.jobcopilot.profile_service.parser.stages;
 
-import com.jobcopilot.profile_service.parser.model.input.ExtractedTextInput;
-import com.jobcopilot.profile_service.parser.model.input.StageInput;
-import com.jobcopilot.profile_service.parser.model.output.StageOutput;
-import com.jobcopilot.profile_service.parser.model.request.PDFAnalysisPipelineRequest;
+import com.jobcopilot.parser.model.input.ExtractedTextInput;
+import com.jobcopilot.parser.model.input.StageInput;
+import com.jobcopilot.parser.model.output.StageOutput;
+import com.jobcopilot.parser.model.request.PDFAnalysisPipelineRequest;
+import com.jobcopilot.parser.stages.PipelineStage;
 import java.io.ByteArrayInputStream;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
@@ -14,9 +15,7 @@ public class PdfToTextExtractor implements PipelineStage {
 
   @Override
   public StageOutput process(StageInput input) {
-    if (!(input
-        instanceof
-        PDFAnalysisPipelineRequest(byte[] pdfBytes, String filename, String contentType))) {
+    if (!(input instanceof PDFAnalysisPipelineRequest(byte[] pdfBytes, _, _))) {
       throw new IllegalArgumentException(
           "Unsupported input type for PdfToTextExtractor: " + input.getClass());
     }

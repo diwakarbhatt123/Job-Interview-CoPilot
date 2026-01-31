@@ -1,6 +1,6 @@
 package com.jobcopilot.profile_service.entity.values;
 
-import com.jobcopilot.profile_service.parser.dictionary.Skill;
+import com.jobcopilot.parser.dictionary.Skill;
 import java.util.List;
 import lombok.Builder;
 import org.springframework.util.CollectionUtils;

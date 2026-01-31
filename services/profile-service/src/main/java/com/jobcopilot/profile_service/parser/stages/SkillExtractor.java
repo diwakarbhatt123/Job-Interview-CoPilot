@@ -1,11 +1,12 @@
 package com.jobcopilot.profile_service.parser.stages;
 
-import com.jobcopilot.profile_service.parser.dictionary.ResumeSection;
-import com.jobcopilot.profile_service.parser.dictionary.Skill;
-import com.jobcopilot.profile_service.parser.model.input.StageInput;
-import com.jobcopilot.profile_service.parser.model.output.SectionizedOutput;
-import com.jobcopilot.profile_service.parser.model.output.SkillExtractedOutput;
-import com.jobcopilot.profile_service.parser.model.output.StageOutput;
+import com.jobcopilot.parser.dictionary.ResumeSection;
+import com.jobcopilot.parser.dictionary.Skill;
+import com.jobcopilot.parser.model.input.StageInput;
+import com.jobcopilot.parser.model.output.SectionizedOutput;
+import com.jobcopilot.parser.model.output.SkillExtractedOutput;
+import com.jobcopilot.parser.model.output.StageOutput;
+import com.jobcopilot.parser.stages.PipelineStage;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -19,8 +20,8 @@ public class SkillExtractor implements PipelineStage {
   private static Set<Skill> matchAll(String text, boolean allowAmbiguous) {
     if (text == null || text.isBlank()) return Set.of();
 
-    String haystack = text; // already normalized by TextNormalizer; do not lowercase blindly
-    String lower = haystack.toLowerCase(Locale.ROOT);
+    // already normalized by TextNormalizer; do not lowercase blindly
+    String lower = text.toLowerCase(Locale.ROOT);
 
     Set<Skill> found = new HashSet<>();
 

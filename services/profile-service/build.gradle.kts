@@ -33,6 +33,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jobcopilot:auth-core:0.0.1-SNAPSHOT")
+    implementation("org.jobcopilot:parser-core:0.0.1-SNAPSHOT")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:4.0.1")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.apache.pdfbox:pdfbox:3.0.6")

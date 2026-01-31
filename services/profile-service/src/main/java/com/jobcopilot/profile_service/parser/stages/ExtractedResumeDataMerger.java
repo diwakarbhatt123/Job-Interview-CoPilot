@@ -1,8 +1,9 @@
 package com.jobcopilot.profile_service.parser.stages;
 
-import com.jobcopilot.profile_service.parser.model.input.StageInput;
-import com.jobcopilot.profile_service.parser.model.output.*;
-import com.jobcopilot.profile_service.parser.model.response.PipelineResponse;
+import com.jobcopilot.parser.model.input.StageInput;
+import com.jobcopilot.parser.model.output.*;
+import com.jobcopilot.parser.model.response.PipelineResponse;
+import com.jobcopilot.parser.stages.PipelineStage;
 
 public class ExtractedResumeDataMerger implements PipelineStage {
   @Override
