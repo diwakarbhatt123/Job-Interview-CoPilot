@@ -1,0 +1,9 @@
+Machine Learning Engineer
+Responsibilities
+- Use off-the-shelf models (e.g. in AWS SageMaker, Bedrock, Comprehend, HuggingFace) to solve core user and business problems.
+Requirements
+- Strong software engineering background with experience writing clean, scalable, and maintainable code in Python.
+- Hands-on experience using cloud-based ML services (especially AWS) in production.
+- Experience with modern deployment stacks and MLOps: CI/CD, model versioning, monitoring.
+Nice to have
+- Experience integrating LLMs into products via APIs or fine-tuning.

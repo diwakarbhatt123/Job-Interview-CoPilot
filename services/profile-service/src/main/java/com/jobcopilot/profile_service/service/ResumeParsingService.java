@@ -1,14 +1,14 @@
 package com.jobcopilot.profile_service.service;
 
 import com.jobcopilot.parser.ParsingPipeline;
-import com.jobcopilot.parser.model.request.PDFAnalysisPipelineRequest;
-import com.jobcopilot.parser.model.request.PlainTextAnalysisPipelineRequest;
-import com.jobcopilot.parser.model.response.PipelineResponse;
 import com.jobcopilot.profile_service.entity.values.*;
 import com.jobcopilot.profile_service.enums.Domain;
 import com.jobcopilot.profile_service.enums.ExperienceLevel;
 import com.jobcopilot.profile_service.enums.ProfileStatus;
 import com.jobcopilot.profile_service.enums.SourceType;
+import com.jobcopilot.profile_service.parser.model.request.PDFAnalysisPipelineRequest;
+import com.jobcopilot.profile_service.parser.model.request.PlainTextAnalysisPipelineRequest;
+import com.jobcopilot.profile_service.parser.model.response.AnalysisPipelineResponse;
 import com.jobcopilot.profile_service.repository.ProfileRepository;
 import java.time.Instant;
 import java.time.Year;
@@ -45,7 +45,8 @@ public class ResumeParsingService {
         .ifPresentOrElse(
             profile -> {
               try {
-                PipelineResponse response = resumeParsingPipeline.execute(pipelineRequest);
+                AnalysisPipelineResponse response =
+                    (AnalysisPipelineResponse) resumeParsingPipeline.execute(pipelineRequest);
 
                 Resume resume = toResume(response, requestedAt, SourceType.PASTED);
                 Derived derived = toDerived(response);
@@ -80,7 +81,8 @@ public class ResumeParsingService {
         .ifPresentOrElse(
             profile -> {
               try {
-                PipelineResponse response = resumePdfParsingPipeline.execute(pipelineRequest);
+                AnalysisPipelineResponse response =
+                    (AnalysisPipelineResponse) resumePdfParsingPipeline.execute(pipelineRequest);
 
                 Resume parsedResume = toResume(response, requestedAt, SourceType.UPLOADED);
                 Derived derived = toDerived(response);
@@ -103,7 +105,8 @@ public class ResumeParsingService {
     log.info("Parsing complete for profileId {}", profileId);
   }
 
-  private Resume toResume(PipelineResponse response, Instant requestedAt, SourceType sourceType) {
+  private Resume toResume(
+      AnalysisPipelineResponse response, Instant requestedAt, SourceType sourceType) {
     return Resume.builder()
         .rawText(response.rawText())
         .source(Source.builder().type(sourceType).uploadedAt(requestedAt).build())
@@ -147,7 +150,7 @@ public class ResumeParsingService {
         .build();
   }
 
-  private Derived toDerived(PipelineResponse response) {
+  private Derived toDerived(AnalysisPipelineResponse response) {
     return Derived.builder()
         .domain(Domain.TECHNOLOGY)
         .experienceLevel(ExperienceLevel.SENIOR_LEVEL)

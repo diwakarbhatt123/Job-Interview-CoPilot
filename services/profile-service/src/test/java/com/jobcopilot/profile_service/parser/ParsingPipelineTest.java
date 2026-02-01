@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.jobcopilot.parser.ParsingPipeline;
 import com.jobcopilot.parser.PipelineBuilder;
-import com.jobcopilot.parser.model.request.PlainTextAnalysisPipelineRequest;
-import com.jobcopilot.parser.model.response.PipelineResponse;
+import com.jobcopilot.profile_service.parser.model.request.PlainTextAnalysisPipelineRequest;
+import com.jobcopilot.profile_service.parser.model.response.AnalysisPipelineResponse;
 import com.jobcopilot.profile_service.parser.stages.EducationExtractor;
 import com.jobcopilot.profile_service.parser.stages.ExperienceExtractor;
 import com.jobcopilot.profile_service.parser.stages.ExtractedResumeDataMerger;
@@ -45,7 +45,8 @@ class ParsingPipelineTest {
             .addStage(new ExtractedResumeDataMerger())
             .build();
 
-    PipelineResponse response = pipeline.execute(new PlainTextAnalysisPipelineRequest(input));
+    AnalysisPipelineResponse response =
+        (AnalysisPipelineResponse) pipeline.execute(new PlainTextAnalysisPipelineRequest(input));
 
     assertThat(response.rawText()).isEqualTo(input);
     assertThat(response.normalizedText()).contains("SUMMARY");

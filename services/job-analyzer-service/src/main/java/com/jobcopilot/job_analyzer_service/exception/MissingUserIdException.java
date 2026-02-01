@@ -1,4 +1,4 @@
-package com.jobcopilot.job_analyzer_service.controller;
+package com.jobcopilot.job_analyzer_service.exception;
 
 public class MissingUserIdException extends RuntimeException {
   public MissingUserIdException() {

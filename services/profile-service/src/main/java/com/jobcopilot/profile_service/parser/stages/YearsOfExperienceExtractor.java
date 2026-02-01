@@ -1,11 +1,11 @@
 package com.jobcopilot.profile_service.parser.stages;
 
-import com.jobcopilot.parser.dictionary.ResumeSection;
 import com.jobcopilot.parser.model.input.StageInput;
-import com.jobcopilot.parser.model.output.SectionizedOutput;
 import com.jobcopilot.parser.model.output.StageOutput;
-import com.jobcopilot.parser.model.output.YearsExtractedOutput;
 import com.jobcopilot.parser.stages.PipelineStage;
+import com.jobcopilot.profile_service.parser.model.dictionary.ResumeSection;
+import com.jobcopilot.profile_service.parser.model.output.SectionizedOutput;
+import com.jobcopilot.profile_service.parser.model.output.YearsExtractedOutput;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.Optional;
