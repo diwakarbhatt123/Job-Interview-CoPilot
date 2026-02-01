@@ -1,0 +1,12 @@
+Senior Backend Engineer
+
+Responsibilities
+- Build APIs in Java and Spring Boot
+- Maintain Kafka pipelines
+
+Requirements
+- Must have Java, Spring Boot, SQL
+- Experience with AWS and Docker
+
+Nice to have
+- Terraform, Kubernetes

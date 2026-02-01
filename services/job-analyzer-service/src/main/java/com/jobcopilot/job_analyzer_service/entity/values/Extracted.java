@@ -1,10 +1,12 @@
 package com.jobcopilot.job_analyzer_service.entity.values;
 
-import com.jobcopilot.job_analyzer_service.enums.Domain;
-import com.jobcopilot.job_analyzer_service.enums.Seniority;
+import com.jobcopilot.job_analyzer_service.parser.dictionary.Domain;
+import com.jobcopilot.job_analyzer_service.parser.dictionary.Seniority;
 import java.util.List;
+import lombok.Builder;
 import org.springframework.util.CollectionUtils;
 
+@Builder(toBuilder = true)
 public record Extracted(
     Seniority seniority,
     Domain domain,

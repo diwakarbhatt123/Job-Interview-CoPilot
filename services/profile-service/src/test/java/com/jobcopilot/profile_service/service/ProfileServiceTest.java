@@ -13,7 +13,7 @@ import com.jobcopilot.profile_service.exception.ProfileAlreadyExistsException;
 import com.jobcopilot.profile_service.model.request.CreateProfileRequest;
 import com.jobcopilot.profile_service.model.response.ProfileStatusResponse;
 import com.jobcopilot.profile_service.model.response.ProfileSummaryResponse;
-import com.jobcopilot.profile_service.parser.dictionary.Skill;
+import com.jobcopilot.profile_service.parser.model.dictionary.Skill;
 import com.jobcopilot.profile_service.repository.ProfileRepository;
 import com.jobcopilot.profile_service.repository.ProfileSummaryView;
 import java.time.Instant;

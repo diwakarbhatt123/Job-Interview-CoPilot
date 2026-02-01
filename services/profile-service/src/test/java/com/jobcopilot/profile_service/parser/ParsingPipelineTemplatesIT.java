@@ -2,9 +2,11 @@ package com.jobcopilot.profile_service.parser;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.jobcopilot.profile_service.parser.dictionary.Skill;
+import com.jobcopilot.parser.ParsingPipeline;
+import com.jobcopilot.parser.PipelineBuilder;
+import com.jobcopilot.profile_service.parser.model.dictionary.Skill;
 import com.jobcopilot.profile_service.parser.model.request.PlainTextAnalysisPipelineRequest;
-import com.jobcopilot.profile_service.parser.model.response.PipelineResponse;
+import com.jobcopilot.profile_service.parser.model.response.AnalysisPipelineResponse;
 import com.jobcopilot.profile_service.parser.stages.EducationExtractor;
 import com.jobcopilot.profile_service.parser.stages.ExperienceExtractor;
 import com.jobcopilot.profile_service.parser.stages.ExtractedResumeDataMerger;
@@ -225,7 +227,8 @@ class ParsingPipelineTemplatesIT {
             .addStage(new ExtractedResumeDataMerger())
             .build();
 
-    PipelineResponse response = pipeline.execute(new PlainTextAnalysisPipelineRequest(tc.text));
+    AnalysisPipelineResponse response =
+        (AnalysisPipelineResponse) pipeline.execute(new PlainTextAnalysisPipelineRequest(tc.text));
 
     assertThat(response.rawText()).isEqualTo(tc.text);
     assertThat(response.normalizedText()).isNotBlank();

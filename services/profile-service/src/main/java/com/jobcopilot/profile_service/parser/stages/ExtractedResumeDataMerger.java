@@ -1,8 +1,10 @@
 package com.jobcopilot.profile_service.parser.stages;
 
-import com.jobcopilot.profile_service.parser.model.input.StageInput;
+import com.jobcopilot.parser.model.input.StageInput;
+import com.jobcopilot.parser.model.output.*;
+import com.jobcopilot.parser.stages.PipelineStage;
 import com.jobcopilot.profile_service.parser.model.output.*;
-import com.jobcopilot.profile_service.parser.model.response.PipelineResponse;
+import com.jobcopilot.profile_service.parser.model.response.AnalysisPipelineResponse;
 
 public class ExtractedResumeDataMerger implements PipelineStage {
   @Override
@@ -11,7 +13,7 @@ public class ExtractedResumeDataMerger implements PipelineStage {
       throw new IllegalArgumentException("Unexpected input for data merger.");
     }
 
-    PipelineResponse response = PipelineResponse.builder().build();
+    AnalysisPipelineResponse response = AnalysisPipelineResponse.builder().build();
 
     if (outputs.originalInput() instanceof SectionizedOutput sectionizedOutput) {
       response =
@@ -19,12 +21,9 @@ public class ExtractedResumeDataMerger implements PipelineStage {
               .rawText(sectionizedOutput.rawText())
               .normalizedText(sectionizedOutput.normalizedText())
               .build();
-    } else if (outputs.originalInput() instanceof NormalizedTextOutput normalizedTextOutput) {
-      response =
-          response.toBuilder()
-              .rawText(normalizedTextOutput.rawText())
-              .normalizedText(normalizedTextOutput.normalizedText())
-              .build();
+    } else if (outputs.originalInput()
+        instanceof NormalizedTextOutput(String normalizedText, String rawText)) {
+      response = response.toBuilder().rawText(rawText).normalizedText(normalizedText).build();
     }
 
     for (StageOutput output : outputs.outputs()) {

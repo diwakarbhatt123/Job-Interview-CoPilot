@@ -2,7 +2,7 @@ package com.jobcopilot.profile_service.parser.stages;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.jobcopilot.profile_service.parser.dictionary.ResumeSection;
+import com.jobcopilot.profile_service.parser.model.dictionary.ResumeSection;
 import com.jobcopilot.profile_service.parser.model.output.NormalizedTextOutput;
 import com.jobcopilot.profile_service.parser.model.output.SectionizedOutput;
 import org.junit.jupiter.api.Test;
@@ -14,14 +14,16 @@ class SectionizerTest {
   @Test
   void detectsStandardSectionsAndAliases() {
     String text =
-        "SUMMARY\n"
-            + "Backend engineer\n"
-            + "WORK EXPERIENCE\n"
-            + "Acme Corp\n"
-            + "EDUCATION:\n"
-            + "State University\n"
-            + "SKILLS\n"
-            + "Java, Spring\n";
+        """
+            SUMMARY
+            Backend engineer
+            WORK EXPERIENCE
+            Acme Corp
+            EDUCATION:
+            State University
+            SKILLS
+            Java, Spring
+            """;
 
     SectionizedOutput output =
         (SectionizedOutput) sectionizer.process(new NormalizedTextOutput(text, text));
@@ -38,27 +40,31 @@ class SectionizerTest {
   @Test
   void ignoresNonHeaderLines() {
     String text =
-        "This line is not a header\n"
-            + "Experience in backend systems\n"
-            + "EXPERIENCE\n"
-            + "Acme Corp\n";
+        """
+            This line is not a header
+            Experience in backend systems
+            EXPERIENCE
+            Acme Corp
+            """;
 
     SectionizedOutput output =
         (SectionizedOutput) sectionizer.process(new NormalizedTextOutput(text, text));
 
     assertThat(output.sections()).hasSize(1);
-    assertThat(output.sections().get(0).getSection()).isEqualTo(ResumeSection.EXPERIENCE);
+    assertThat(output.sections().getFirst().getSection()).isEqualTo(ResumeSection.EXPERIENCE);
   }
 
   @Test
   void handlesAllCapsHeadersWithPunctuation() {
     String text =
-        "SKILLS:\n"
-            + "Java, Spring\n"
-            + "PROJECTS -\n"
-            + "Parser Pipeline\n"
-            + "EDUCATION:\n"
-            + "State University\n";
+        """
+            SKILLS:
+            Java, Spring
+            PROJECTS -
+            Parser Pipeline
+            EDUCATION:
+            State University
+            """;
 
     SectionizedOutput output =
         (SectionizedOutput) sectionizer.process(new NormalizedTextOutput(text, text));

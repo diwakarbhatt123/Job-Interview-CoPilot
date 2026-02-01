@@ -1,10 +1,8 @@
 package com.jobcopilot.profile_service.parser.stages;
 
-import com.jobcopilot.profile_service.parser.dictionary.ResumeSection;
-import com.jobcopilot.profile_service.parser.model.input.StageInput;
-import com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput;
-import com.jobcopilot.profile_service.parser.model.output.SectionizedOutput;
-import com.jobcopilot.profile_service.parser.model.output.StageOutput;
+import com.jobcopilot.parser.model.input.StageInput;
+import com.jobcopilot.parser.model.output.StageOutput;
+import com.jobcopilot.parser.stages.PipelineStage;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -37,26 +35,35 @@ public class EducationExtractor implements PipelineStage {
 
   @Override
   public StageOutput process(StageInput input) {
-    if (!(input instanceof SectionizedOutput sectionized)) {
+    if (!(input
+        instanceof
+        com.jobcopilot.profile_service.parser.model.output.SectionizedOutput sectionized)) {
       throw new IllegalArgumentException(
           "Invalid input type for EducationExtractor stage: " + input.getClass());
     }
 
-    Optional<SectionizedOutput.SectionDetail> eduSectionOpt =
-        sectionized.sections().stream()
-            .filter(s -> s.getSection() == ResumeSection.EDUCATION)
-            .findFirst();
+    Optional<com.jobcopilot.profile_service.parser.model.output.SectionizedOutput.SectionDetail>
+        eduSectionOpt =
+            sectionized.sections().stream()
+                .filter(
+                    s ->
+                        s.getSection()
+                            == com.jobcopilot.profile_service.parser.model.dictionary.ResumeSection
+                                .EDUCATION)
+                .findFirst();
 
     if (eduSectionOpt.isEmpty()) {
-      return new EducationExtractedOutput(List.of());
+      return new com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput(
+          List.of());
     }
 
     List<String> lines =
         eduSectionOpt.get().getLines() == null ? List.of() : eduSectionOpt.get().getLines();
 
-    List<EducationExtractedOutput.EducationEntry> entries = extractEntries(lines);
+    List<com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput.EducationEntry>
+        entries = extractEntries(lines);
 
-    return new EducationExtractedOutput(entries);
+    return new com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput(entries);
   }
 
   @Override
@@ -64,13 +71,18 @@ public class EducationExtractor implements PipelineStage {
     return true;
   }
 
-  private List<EducationExtractedOutput.EducationEntry> extractEntries(List<String> lines) {
-    List<EducationExtractedOutput.EducationEntry> out = new ArrayList<>();
+  private List<
+          com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput
+              .EducationEntry>
+      extractEntries(List<String> lines) {
+    List<com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput.EducationEntry>
+        out = new ArrayList<>();
 
-    EducationExtractedOutput.EducationEntryBuilder current = null;
+    com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput
+            .EducationEntryBuilder
+        current = null;
 
-    for (int i = 0; i < lines.size(); i++) {
-      String raw = lines.get(i);
+    for (String raw : lines) {
       if (raw == null) continue;
 
       String line = raw.trim();
@@ -84,7 +96,9 @@ public class EducationExtractor implements PipelineStage {
       }
 
       if (current == null) {
-        current = new EducationExtractedOutput.EducationEntryBuilder();
+        current =
+            new com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput
+                .EducationEntryBuilder();
       }
 
       if (current.lines.size() < MAX_ENTRY_LINES) {
@@ -98,8 +112,11 @@ public class EducationExtractor implements PipelineStage {
 
     // If we still have nothing but there was content, return a single coarse entry
     if (out.isEmpty()) {
-      EducationExtractedOutput.EducationEntryBuilder fallback =
-          new EducationExtractedOutput.EducationEntryBuilder();
+      com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput
+              .EducationEntryBuilder
+          fallback =
+              new com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput
+                  .EducationEntryBuilder();
       for (String l : lines) {
         if (l == null) continue;
         String t = l.trim();
@@ -113,19 +130,10 @@ public class EducationExtractor implements PipelineStage {
     return out.stream().map(this::enrich).collect(Collectors.toList());
   }
 
-  private boolean isLikelyEntryStart(String line) {
-    // Strong signals
-    if (DEGREE_KEYWORDS.matcher(line).find()) return true;
-    if (YEAR_RANGE.matcher(line).find()) return true;
-
-    // Medium signals
-    if (INSTITUTION_HINT.matcher(line).find() && looksTitleish(line)) return true;
-
-    return false;
-  }
-
-  private EducationExtractedOutput.EducationEntry enrich(
-      EducationExtractedOutput.EducationEntry entry) {
+  private com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput.EducationEntry
+      enrich(
+          com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput.EducationEntry
+              entry) {
     List<String> lines = entry.lines() == null ? List.of() : entry.lines();
 
     // Extract years (prefer range; else single years -> treat as endYear)
@@ -151,7 +159,8 @@ public class EducationExtractor implements PipelineStage {
     Optional<String> institution =
         extractInstitution(lines, degree.orElse(null), field.orElse(null));
 
-    return new EducationExtractedOutput.EducationEntry(
+    return new com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput
+        .EducationEntry(
         institution.orElse(null),
         degree.orElse(null),
         field.orElse(null),
@@ -262,7 +271,7 @@ public class EducationExtractor implements PipelineStage {
     s = s.replaceAll("\\b(19\\d{2}|20\\d{2})\\b", "").trim();
     if (degree != null) s = s.replace(degree, "").trim();
     if (field != null && !field.isBlank()) s = s.replace(field, "").trim();
-    s = s.replaceAll("[\\(\\)\\[\\],;:|]+", " ").replaceAll("\\s{2,}", " ").trim();
+    s = s.replaceAll("[()\\[\\],;:|]+", " ").replaceAll("\\s{2,}", " ").trim();
     return s;
   }
 
