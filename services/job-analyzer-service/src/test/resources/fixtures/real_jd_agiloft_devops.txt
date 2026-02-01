@@ -1,0 +1,8 @@
+Senior DevOps Engineer
+Job Responsibilities
+- Design and implement advanced CI/CD pipelines for complex applications.
+- Develop and maintain IaC on AWS, to ensure scalability, security and reliability.
+- Containerization and orchestration (Docker, Kubernetes).
+Required Qualifications
+- In-depth knowledge of DevOps principles, practices, and technologies including Amazon Web Services (AWS) and Terraform.
+- Advanced knowledge of scripting and automation utilizing Python.

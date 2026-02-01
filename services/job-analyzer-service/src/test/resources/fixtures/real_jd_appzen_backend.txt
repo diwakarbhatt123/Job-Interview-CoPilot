@@ -1,0 +1,11 @@
+Senior Backend Engineer
+Responsibilities
+- Write well designed, clean, efficient code backed by unit tests.
+- Build for security and performance.
+Must have
+- 5+ years experience in Java and willing to learn Go.
+- Mandatory Skills: Core Java, J2ee, Spring, Rest API, SQL (Oracle, MYSQL, Postgresql, MSSQL).
+- Strong experience building RESTful APIs and microservices.
+Good to Have
+- Containerization & Orchestration: Familiar with Docker and Kubernetes.
+- CI/CD & Version Control: Familiar with Git and CI/CD pipelines.

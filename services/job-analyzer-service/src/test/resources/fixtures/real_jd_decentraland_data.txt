@@ -1,0 +1,9 @@
+Sr Data Engineer
+Responsibilities
+- Design, build, and maintain complex ETL/ELT pipelines and data workflows using Snowflake, dbt, Airflow, and Meltano within our AWS-based infrastructure.
+- Collaborate closely with analytics, product, and engineering teams.
+Requirements
+- Advanced proficiency with Python for building data pipelines and automation.
+- Deep knowledge of AWS services related to data processing and storage.
+Nice-to-haves
+- Experience with telemetry tools like Prometheus and implementing observability for data systems.
