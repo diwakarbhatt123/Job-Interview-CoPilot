@@ -2,9 +2,9 @@ package com.jobcopilot.profile_service.parser.stages;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.jobcopilot.parser.dictionary.ResumeSection;
-import com.jobcopilot.parser.model.output.NormalizedTextOutput;
-import com.jobcopilot.parser.model.output.SectionizedOutput;
+import com.jobcopilot.profile_service.parser.model.dictionary.ResumeSection;
+import com.jobcopilot.profile_service.parser.model.output.NormalizedTextOutput;
+import com.jobcopilot.profile_service.parser.model.output.SectionizedOutput;
 import org.junit.jupiter.api.Test;
 
 class SectionizerTest {

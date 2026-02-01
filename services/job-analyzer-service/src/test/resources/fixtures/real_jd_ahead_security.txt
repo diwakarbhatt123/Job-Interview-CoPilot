@@ -1,0 +1,6 @@
+Security Engineer
+Key Responsibilities
+- Design, implement and administer security applications and infrastructure to support company policies and standards.
+Skills Required
+- Demonstrated experience with the use and deployment of security tools such as SIEM, IDS/IPS, endpoint protection and hardening, identity and access management, encryption, vulnerability management, or data loss prevention (DLP).
+- Experience with SaaS and Cloud Provider (AWS, Azure, GCP) security is highly desirable.

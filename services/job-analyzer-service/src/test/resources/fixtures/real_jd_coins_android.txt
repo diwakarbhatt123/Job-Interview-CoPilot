@@ -1,0 +1,6 @@
+Android Engineer
+Job Responsibilities
+- Responsible for Android client development, realize business requirements, and complete functional code writing with high quality.
+Requirements
+- Proficient in Java or Kotlin, with solid programming skills.
+- Proficient in multi-threaded development, familiar with the working principles of HTTP/HTTPS/Socket.

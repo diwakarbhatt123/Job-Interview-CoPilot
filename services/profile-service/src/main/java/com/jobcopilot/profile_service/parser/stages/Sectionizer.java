@@ -1,9 +1,6 @@
 package com.jobcopilot.profile_service.parser.stages;
 
-import com.jobcopilot.parser.dictionary.ResumeSection;
 import com.jobcopilot.parser.model.input.StageInput;
-import com.jobcopilot.parser.model.output.NormalizedTextOutput;
-import com.jobcopilot.parser.model.output.SectionizedOutput;
 import com.jobcopilot.parser.model.output.StageOutput;
 import com.jobcopilot.parser.stages.PipelineStage;
 import com.jobcopilot.parser.utils.ParsingUtils;
@@ -26,13 +23,18 @@ public class Sectionizer implements PipelineStage {
   @Override
   public StageOutput process(StageInput input) {
 
-    if (!(input instanceof NormalizedTextOutput(String inputText, String rawText))) {
+    if (!(input
+        instanceof
+        com.jobcopilot.profile_service.parser.model.output.NormalizedTextOutput(
+            String inputText,
+            String rawText))) {
       throw new IllegalArgumentException(
           "Invalid input type for Sectionizer stage: " + input.getClass());
     }
 
     List<String> lines = inputText.lines().toList();
-    List<SectionizedOutput.SectionDetail> sectionDetails = new ArrayList<>();
+    List<com.jobcopilot.profile_service.parser.model.output.SectionizedOutput.SectionDetail>
+        sectionDetails = new ArrayList<>();
 
     int i = 0;
     while (i < lines.size()) {
@@ -44,8 +46,10 @@ public class Sectionizer implements PipelineStage {
 
       String headerName = currentRaw.trim();
       String headerForAlias = normalizeHeaderForAlias(headerName);
-      ResumeSection section = ResumeSection.fromAliasOrUnknown(headerForAlias);
-      if (section == ResumeSection.UNKNOWN) {
+      com.jobcopilot.profile_service.parser.model.dictionary.ResumeSection section =
+          com.jobcopilot.profile_service.parser.model.dictionary.ResumeSection.fromAliasOrUnknown(
+              headerForAlias);
+      if (section == com.jobcopilot.profile_service.parser.model.dictionary.ResumeSection.UNKNOWN) {
         i++;
         continue;
       }
@@ -61,8 +65,11 @@ public class Sectionizer implements PipelineStage {
 
         if (ParsingUtils.isLikelyHeader(nextRaw)) {
           String nextHeaderForAlias = normalizeHeaderForAlias(nextRaw);
-          ResumeSection nextSection = ResumeSection.fromAliasOrUnknown(nextHeaderForAlias);
-          if (nextSection != ResumeSection.UNKNOWN) {
+          com.jobcopilot.profile_service.parser.model.dictionary.ResumeSection nextSection =
+              com.jobcopilot.profile_service.parser.model.dictionary.ResumeSection
+                  .fromAliasOrUnknown(nextHeaderForAlias);
+          if (nextSection
+              != com.jobcopilot.profile_service.parser.model.dictionary.ResumeSection.UNKNOWN) {
             endLine = j - 1;
             break;
           }
@@ -72,8 +79,9 @@ public class Sectionizer implements PipelineStage {
         j++;
       }
 
-      SectionizedOutput.SectionDetail detail =
-          SectionizedOutput.SectionDetail.builder()
+      com.jobcopilot.profile_service.parser.model.output.SectionizedOutput.SectionDetail detail =
+          com.jobcopilot.profile_service.parser.model.output.SectionizedOutput.SectionDetail
+              .builder()
               .name(headerName)
               .startLine(startLine)
               .endLine(endLine)
@@ -86,6 +94,7 @@ public class Sectionizer implements PipelineStage {
       i = Math.min(j, lines.size());
     }
 
-    return new SectionizedOutput(rawText, inputText, sectionDetails);
+    return new com.jobcopilot.profile_service.parser.model.output.SectionizedOutput(
+        rawText, inputText, sectionDetails);
   }
 }
