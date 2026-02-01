@@ -4,6 +4,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.jobcopilot.job_analyzer_service.entity.Job;
+import com.jobcopilot.job_analyzer_service.entity.values.Error;
+import com.jobcopilot.job_analyzer_service.entity.values.Extracted;
+import com.jobcopilot.job_analyzer_service.enums.ErrorCode;
+import com.jobcopilot.job_analyzer_service.parser.dictionary.Domain;
 import java.time.Instant;
 import java.util.List;
 import org.bson.Document;
@@ -51,12 +56,8 @@ class JobRepositoryImplTest {
         }
       }
     } else if (value instanceof Enum<?> enumValue) {
-      if (enumValue.name().equals(needle)) {
-        return true;
-      }
-    } else if (needle.equals(String.valueOf(value))) {
-      return true;
-    }
+      return enumValue.name().equals(needle);
+    } else return needle.equals(String.valueOf(value));
     return false;
   }
 
@@ -89,5 +90,71 @@ class JobRepositoryImplTest {
     org.assertj.core.api.Assertions.assertThat(containsValueRecursive(query, "PENDING")).isTrue();
     org.assertj.core.api.Assertions.assertThat(containsValueRecursive(query, "PROCESSING"))
         .isTrue();
+  }
+
+  @Test
+  void markCompletedWithExtracted_requiresLockOwnerAndSetsExtracted() {
+    MongoOperations mongoOperations = Mockito.mock(MongoOperations.class);
+    ObjectProvider<MongoOperations> provider = Mockito.mock(ObjectProvider.class);
+    when(provider.getObject()).thenReturn(mongoOperations);
+    JobRepositoryImpl repository = new JobRepositoryImpl(provider);
+    Instant now = Instant.parse("2026-01-18T10:15:30Z");
+    Extracted extracted = Extracted.builder().domain(Domain.BACKEND).build();
+
+    repository.markCompletedWithExtracted("job-1", "poller-1", now, "normalized", extracted);
+
+    ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
+    ArgumentCaptor<Update> updateCaptor = ArgumentCaptor.forClass(Update.class);
+    verify(mongoOperations)
+        .updateFirst(
+            queryCaptor.capture(),
+            updateCaptor.capture(),
+            org.mockito.ArgumentMatchers.eq(Job.class));
+
+    Document query = queryCaptor.getValue().getQueryObject();
+    org.assertj.core.api.Assertions.assertThat(containsKeyRecursive(query, "analysis.lockedBy"))
+        .isTrue();
+    org.assertj.core.api.Assertions.assertThat(containsValueRecursive(query, "PROCESSING"))
+        .isTrue();
+    org.assertj.core.api.Assertions.assertThat(containsValueRecursive(query, "poller-1")).isTrue();
+
+    Document update = updateCaptor.getValue().getUpdateObject();
+    org.assertj.core.api.Assertions.assertThat(containsKeyRecursive(update, "input.normalizedText"))
+        .isTrue();
+    org.assertj.core.api.Assertions.assertThat(containsKeyRecursive(update, "extracted")).isTrue();
+    org.assertj.core.api.Assertions.assertThat(containsValueRecursive(update, "COMPLETED"))
+        .isTrue();
+  }
+
+  @Test
+  void markFailed_requiresLockOwnerAndSetsError() {
+    MongoOperations mongoOperations = Mockito.mock(MongoOperations.class);
+    ObjectProvider<MongoOperations> provider = Mockito.mock(ObjectProvider.class);
+    when(provider.getObject()).thenReturn(mongoOperations);
+    JobRepositoryImpl repository = new JobRepositoryImpl(provider);
+    Instant now = Instant.parse("2026-01-18T10:15:30Z");
+    Error error = new Error(ErrorCode.PARSER_FAILED, "msg", "detail", false);
+
+    repository.markFailed("job-2", "poller-2", now, error);
+
+    ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
+    ArgumentCaptor<Update> updateCaptor = ArgumentCaptor.forClass(Update.class);
+    verify(mongoOperations)
+        .updateFirst(
+            queryCaptor.capture(),
+            updateCaptor.capture(),
+            org.mockito.ArgumentMatchers.eq(Job.class));
+
+    Document query = queryCaptor.getValue().getQueryObject();
+    org.assertj.core.api.Assertions.assertThat(containsKeyRecursive(query, "analysis.lockedBy"))
+        .isTrue();
+    org.assertj.core.api.Assertions.assertThat(containsValueRecursive(query, "PROCESSING"))
+        .isTrue();
+    org.assertj.core.api.Assertions.assertThat(containsValueRecursive(query, "poller-2")).isTrue();
+
+    Document update = updateCaptor.getValue().getUpdateObject();
+    org.assertj.core.api.Assertions.assertThat(containsKeyRecursive(update, "analysis.error"))
+        .isTrue();
+    org.assertj.core.api.Assertions.assertThat(containsValueRecursive(update, "FAILED")).isTrue();
   }
 }
