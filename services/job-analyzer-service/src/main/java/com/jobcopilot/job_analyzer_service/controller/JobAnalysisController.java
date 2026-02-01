@@ -1,5 +1,6 @@
 package com.jobcopilot.job_analyzer_service.controller;
 
+import com.jobcopilot.job_analyzer_service.exception.MissingUserIdException;
 import com.jobcopilot.job_analyzer_service.exception.ProfileOwnershipException;
 import com.jobcopilot.job_analyzer_service.exception.ProfileServiceException;
 import com.jobcopilot.job_analyzer_service.model.request.SubmitJobAnalysisRequest;

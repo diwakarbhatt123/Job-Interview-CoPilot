@@ -1,0 +1,9 @@
+Full Stack Developer
+
+What you'll do
+- Build frontend features in React
+- Build backend services in Go
+
+Qualifications
+- Proficient in Go, REST, SQL
+- Nice to have GraphQL and Docker

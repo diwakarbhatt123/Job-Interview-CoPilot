@@ -2,8 +2,8 @@ package com.jobcopilot.profile_service.parser.stages;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.jobcopilot.parser.model.output.NormalizedTextOutput;
-import com.jobcopilot.parser.model.request.PlainTextAnalysisPipelineRequest;
+import com.jobcopilot.profile_service.parser.model.output.NormalizedTextOutput;
+import com.jobcopilot.profile_service.parser.model.request.PlainTextAnalysisPipelineRequest;
 import org.junit.jupiter.api.Test;
 
 class TextNormalizerTest {

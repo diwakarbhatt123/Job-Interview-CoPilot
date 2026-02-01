@@ -1,6 +1,6 @@
 package com.jobcopilot.parser;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.jobcopilot.parser.model.StageGroup;
 import com.jobcopilot.parser.stages.PipelineStage;
@@ -22,11 +22,11 @@ class ExecutionPlannerTest {
     List<StageGroup> groups = ExecutionPlanner.toExecutionPlan(stages);
 
     assertEquals(3, groups.size());
-    assertEquals(false, groups.get(0).parallel());
+    assertFalse(groups.get(0).parallel());
     assertEquals(2, groups.get(0).stages().size());
-    assertEquals(true, groups.get(1).parallel());
+    assertTrue(groups.get(1).parallel());
     assertEquals(2, groups.get(1).stages().size());
-    assertEquals(false, groups.get(2).parallel());
+    assertFalse(groups.get(2).parallel());
     assertEquals(1, groups.get(2).stages().size());
   }
 
