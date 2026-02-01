@@ -2,3 +2,4 @@ rootProject.name = "interview-job-copilot"
 
 
 include 'shared:libs:auth-core'
+include 'shared:libs:parser-core'

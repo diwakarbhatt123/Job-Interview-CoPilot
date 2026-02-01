@@ -5,14 +5,15 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.jobcopilot.parser.ParsingPipeline;
+import com.jobcopilot.parser.PipelineBuilder;
+import com.jobcopilot.parser.model.response.PipelineResponse;
 import com.jobcopilot.profile_service.entity.Profile;
 import com.jobcopilot.profile_service.enums.ProfileStatus;
 import com.jobcopilot.profile_service.enums.SourceType;
-import com.jobcopilot.profile_service.parser.ParsingPipeline;
-import com.jobcopilot.profile_service.parser.PipelineBuilder;
 import com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput;
 import com.jobcopilot.profile_service.parser.model.output.ExperienceExtractedOutput;
-import com.jobcopilot.profile_service.parser.model.response.PipelineResponse;
+import com.jobcopilot.profile_service.parser.model.response.AnalysisPipelineResponse;
 import com.jobcopilot.profile_service.repository.ProfileRepository;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -26,8 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class ResumeParsingServiceTest {
-
-  @Mock private ParsingPipeline resumeParsingPipeline;
   @Mock private ProfileRepository profileRepository;
 
   private ResumeParsingService resumeParsingService;
@@ -38,12 +37,12 @@ class ResumeParsingServiceTest {
   }
 
   @Test
-  void parseResume_setsSourceTypeAndMapsExperienceDates() throws Exception {
+  void parseResume_setsSourceTypeAndMapsExperienceDates() {
     Profile profile = Profile.builder().id("profile-1").status(ProfileStatus.CREATED).build();
     when(profileRepository.findById("profile-1")).thenReturn(Optional.of(profile));
 
     PipelineResponse response =
-        PipelineResponse.builder()
+        AnalysisPipelineResponse.builder()
             .rawText("raw")
             .normalizedText("normalized")
             .experiences(
@@ -62,10 +61,9 @@ class ResumeParsingServiceTest {
                         "Uni", "BSc", null, null, null, List.of())))
             .build();
 
-    ParsingPipeline resumeParsingPipeline =
-        PipelineBuilder.init().addStage(input -> response).build();
+    ParsingPipeline resumeParsingPipeline = PipelineBuilder.init().addStage(_ -> response).build();
     ParsingPipeline resumePdfParsingPipeline =
-        PipelineBuilder.init().addStage(input -> response).build();
+        PipelineBuilder.init().addStage(_ -> response).build();
     resumeParsingService =
         new ResumeParsingService(
             resumeParsingPipeline, resumePdfParsingPipeline, profileRepository);
@@ -85,17 +83,16 @@ class ResumeParsingServiceTest {
   }
 
   @Test
-  void parseResumeFile_setsSourceTypeUploaded() throws Exception {
+  void parseResumeFile_setsSourceTypeUploaded() {
     Profile profile = Profile.builder().id("profile-2").status(ProfileStatus.CREATED).build();
     when(profileRepository.findById("profile-2")).thenReturn(Optional.of(profile));
 
     PipelineResponse response =
-        PipelineResponse.builder().rawText("raw").normalizedText("normalized").build();
+        AnalysisPipelineResponse.builder().rawText("raw").normalizedText("normalized").build();
 
-    ParsingPipeline resumeParsingPipeline =
-        PipelineBuilder.init().addStage(input -> response).build();
+    ParsingPipeline resumeParsingPipeline = PipelineBuilder.init().addStage(_ -> response).build();
     ParsingPipeline resumePdfParsingPipeline =
-        PipelineBuilder.init().addStage(input -> response).build();
+        PipelineBuilder.init().addStage(_ -> response).build();
     resumeParsingService =
         new ResumeParsingService(
             resumeParsingPipeline, resumePdfParsingPipeline, profileRepository);

@@ -3,7 +3,8 @@ package com.jobcopilot.profile_service.parser.model.output;
 import java.util.ArrayList;
 import java.util.List;
 
-public record ExperienceExtractedOutput(List<ExperienceEntry> entries) implements StageOutput {
+public record ExperienceExtractedOutput(List<ExperienceEntry> entries)
+    implements com.jobcopilot.parser.model.output.StageOutput {
   public ExperienceExtractedOutput {
     entries = entries == null ? List.of() : List.copyOf(entries);
   }

@@ -3,7 +3,8 @@ package com.jobcopilot.profile_service.parser.model.output;
 import java.util.ArrayList;
 import java.util.List;
 
-public record EducationExtractedOutput(List<EducationEntry> entries) implements StageOutput {
+public record EducationExtractedOutput(List<EducationEntry> entries)
+    implements com.jobcopilot.parser.model.output.StageOutput {
   public EducationExtractedOutput {
     entries = entries == null ? List.of() : List.copyOf(entries);
   }

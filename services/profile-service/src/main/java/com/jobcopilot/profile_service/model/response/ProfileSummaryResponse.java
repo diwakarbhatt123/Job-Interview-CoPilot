@@ -3,7 +3,7 @@ package com.jobcopilot.profile_service.model.response;
 import com.jobcopilot.profile_service.enums.Domain;
 import com.jobcopilot.profile_service.enums.ExperienceLevel;
 import com.jobcopilot.profile_service.enums.ProfileStatus;
-import com.jobcopilot.profile_service.parser.dictionary.Skill;
+import com.jobcopilot.profile_service.parser.model.dictionary.Skill;
 import java.time.Instant;
 import java.util.List;
 import lombok.Builder;

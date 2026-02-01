@@ -13,12 +13,14 @@ class TextNormalizerTest {
   @Test
   void normalizesWhitespaceBulletsAndHeaders() {
     String input =
-        "SUMMARY:\r\n"
-            + "•  Built\t systems  \r\n"
-            + "—  Led team\r\n"
-            + "\r\n"
-            + "EXPERIENCE:\r\n"
-            + "Software Engineer\r\n";
+        """
+            SUMMARY:\r
+            •  Built\t systems  \r
+            —  Led team\r
+            \r
+            EXPERIENCE:\r
+            Software Engineer\r
+            """;
 
     NormalizedTextOutput output =
         (NormalizedTextOutput) normalizer.process(new PlainTextAnalysisPipelineRequest(input));
@@ -35,11 +37,13 @@ class TextNormalizerTest {
   @Test
   void repairsLineWrappingForLowercaseContinuationOnly() {
     String input =
-        "Professional Summary\n"
-            + "experienced\n"
-            + "engineer with backend focus\n"
-            + "EXPERIENCE\n"
-            + "Acme Corp\n";
+        """
+            Professional Summary
+            experienced
+            engineer with backend focus
+            EXPERIENCE
+            Acme Corp
+            """;
 
     NormalizedTextOutput output =
         (NormalizedTextOutput) normalizer.process(new PlainTextAnalysisPipelineRequest(input));
