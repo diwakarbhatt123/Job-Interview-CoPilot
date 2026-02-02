@@ -7,12 +7,13 @@ import static org.mockito.Mockito.when;
 
 import com.jobcopilot.parser.ParsingPipeline;
 import com.jobcopilot.parser.PipelineBuilder;
-import com.jobcopilot.parser.model.output.EducationExtractedOutput;
-import com.jobcopilot.parser.model.output.ExperienceExtractedOutput;
 import com.jobcopilot.parser.model.response.PipelineResponse;
 import com.jobcopilot.profile_service.entity.Profile;
 import com.jobcopilot.profile_service.enums.ProfileStatus;
 import com.jobcopilot.profile_service.enums.SourceType;
+import com.jobcopilot.profile_service.parser.model.output.EducationExtractedOutput;
+import com.jobcopilot.profile_service.parser.model.output.ExperienceExtractedOutput;
+import com.jobcopilot.profile_service.parser.model.response.AnalysisPipelineResponse;
 import com.jobcopilot.profile_service.repository.ProfileRepository;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -41,7 +42,7 @@ class ResumeParsingServiceTest {
     when(profileRepository.findById("profile-1")).thenReturn(Optional.of(profile));
 
     PipelineResponse response =
-        PipelineResponse.builder()
+        AnalysisPipelineResponse.builder()
             .rawText("raw")
             .normalizedText("normalized")
             .experiences(
@@ -87,7 +88,7 @@ class ResumeParsingServiceTest {
     when(profileRepository.findById("profile-2")).thenReturn(Optional.of(profile));
 
     PipelineResponse response =
-        PipelineResponse.builder().rawText("raw").normalizedText("normalized").build();
+        AnalysisPipelineResponse.builder().rawText("raw").normalizedText("normalized").build();
 
     ParsingPipeline resumeParsingPipeline = PipelineBuilder.init().addStage(_ -> response).build();
     ParsingPipeline resumePdfParsingPipeline =

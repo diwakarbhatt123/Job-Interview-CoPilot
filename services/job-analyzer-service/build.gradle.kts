@@ -5,7 +5,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "4.0.2"
 	id("io.spring.dependency-management") version "1.1.7"
-    id("com.diffplug.spotless") version "8.1.0"
+    id("com.diffplug.spotless") version "8.2.1"
     id("com.github.spotbugs") version "6.4.8"
 }
 
@@ -31,7 +31,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.1.0")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.1.1")
     }
 }
 
@@ -39,6 +39,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jobcopilot:auth-core:0.0.1-SNAPSHOT")
+    implementation("org.jobcopilot:parser-core:0.0.1-SNAPSHOT")
     implementation("com.jobcopilot:profile-service-client:0.0.1-SNAPSHOT")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:4.0.2")
     implementation("org.springframework.boot:spring-boot-starter-validation")

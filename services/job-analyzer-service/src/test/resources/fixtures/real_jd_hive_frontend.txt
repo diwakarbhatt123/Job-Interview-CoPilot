@@ -1,0 +1,8 @@
+Frontend Engineer
+Responsibilities
+- Build secure custom user interfaces using React (JavaScript).
+- Analyze and optimize UI application code for efficiency and performance.
+Requirements
+- You have in-depth knowledge of JavaScript, HTML, CSS, and related web technologies.
+- You have a strong grasp of React and Redux (or similar frameworks).
+- You have experience working with 3rd party APIs and libraries.

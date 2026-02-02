@@ -1,0 +1,9 @@
+Technical Lead, Software Engineering Full stack ( Java & Angular )
+Responsibilities
+- Design, implement, and maintain high-volume, low-latency applications using Java and the Spring Boot framework.
+- Contribute to the design and evolution of our Microservices architecture.
+Requirements
+- Deep knowledge and hands-on experience with Java and the Spring Framework (Spring Boot, Spring Data, Spring Security). Experience designing and implementing RESTful APIs.
+- Proficient in SQL (e.g., PostgreSQL, MySQL) and NoSQL (e.g., MongoDB) databases.
+- Experience with cloud platforms (e.g., AWS) and containerization technologies (Docker, Kubernetes).
+- Familiarity with CI/CD tools (e.g., Jenkins, GitLab CI).

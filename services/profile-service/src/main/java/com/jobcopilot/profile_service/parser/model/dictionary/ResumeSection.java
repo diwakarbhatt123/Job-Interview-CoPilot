@@ -1,4 +1,4 @@
-package com.jobcopilot.parser.dictionary;
+package com.jobcopilot.profile_service.parser.model.dictionary;
 
 public enum ResumeSection {
   EXPERIENCE,

@@ -1,0 +1,7 @@
+Senior Platform Engineer
+Key Responsibilities
+- Design, build, and maintain core platform services and self-service tools.
+Skills & Qualifications
+- Strong expertise with cloud platforms (AWS/GCP) and container orchestration.
+- Deep experience with CI/CD tools (GitLab) and infrastructure-as-code (Terraform, Pulumi, or similar).
+- Strong Scripting Experience (Python Preferred).
