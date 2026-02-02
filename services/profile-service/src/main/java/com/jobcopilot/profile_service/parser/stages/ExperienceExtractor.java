@@ -1,9 +1,6 @@
 package com.jobcopilot.profile_service.parser.stages;
 
-import com.jobcopilot.parser.dictionary.ResumeSection;
 import com.jobcopilot.parser.model.input.StageInput;
-import com.jobcopilot.parser.model.output.ExperienceExtractedOutput;
-import com.jobcopilot.parser.model.output.SectionizedOutput;
 import com.jobcopilot.parser.model.output.StageOutput;
 import com.jobcopilot.parser.stages.PipelineStage;
 import java.util.ArrayList;
@@ -27,24 +24,36 @@ public class ExperienceExtractor implements PipelineStage {
 
   @Override
   public StageOutput process(StageInput input) {
-    if (!(input instanceof SectionizedOutput sectionized)) {
+    if (!(input
+        instanceof
+        com.jobcopilot.profile_service.parser.model.output.SectionizedOutput sectionized)) {
       throw new IllegalArgumentException(
           "Invalid input type for ExperienceExtractor stage: " + input.getClass());
     }
 
-    Optional<SectionizedOutput.SectionDetail> expSectionOpt =
-        sectionized.sections().stream()
-            .filter(s -> s.getSection() == ResumeSection.EXPERIENCE)
-            .findFirst();
+    Optional<com.jobcopilot.profile_service.parser.model.output.SectionizedOutput.SectionDetail>
+        expSectionOpt =
+            sectionized.sections().stream()
+                .filter(
+                    s ->
+                        s.getSection()
+                            == com.jobcopilot.profile_service.parser.model.dictionary.ResumeSection
+                                .EXPERIENCE)
+                .findFirst();
 
     if (expSectionOpt.isEmpty()) {
-      return new ExperienceExtractedOutput(List.of());
+      return new com.jobcopilot.profile_service.parser.model.output.ExperienceExtractedOutput(
+          List.of());
     }
 
     List<String> lines = expSectionOpt.get().getLines();
-    List<ExperienceExtractedOutput.ExperienceEntry> entries = extractEntries(lines);
+    List<
+            com.jobcopilot.profile_service.parser.model.output.ExperienceExtractedOutput
+                .ExperienceEntry>
+        entries = extractEntries(lines);
 
-    return new ExperienceExtractedOutput(entries);
+    return new com.jobcopilot.profile_service.parser.model.output.ExperienceExtractedOutput(
+        entries);
   }
 
   @Override
@@ -52,10 +61,18 @@ public class ExperienceExtractor implements PipelineStage {
     return true;
   }
 
-  private List<ExperienceExtractedOutput.ExperienceEntry> extractEntries(List<String> lines) {
-    List<ExperienceExtractedOutput.ExperienceEntry> out = new ArrayList<>();
+  private List<
+          com.jobcopilot.profile_service.parser.model.output.ExperienceExtractedOutput
+              .ExperienceEntry>
+      extractEntries(List<String> lines) {
+    List<
+            com.jobcopilot.profile_service.parser.model.output.ExperienceExtractedOutput
+                .ExperienceEntry>
+        out = new ArrayList<>();
 
-    ExperienceExtractedOutput.ExperienceEntryBuilder current = null;
+    com.jobcopilot.profile_service.parser.model.output.ExperienceExtractedOutput
+            .ExperienceEntryBuilder
+        current = null;
 
     for (int i = 0; i < lines.size(); i++) {
       String raw = lines.get(i);
@@ -70,7 +87,9 @@ public class ExperienceExtractor implements PipelineStage {
         if (current != null && current.hasMeaningfulContent()) {
           out.add(current.build());
         }
-        current = new ExperienceExtractedOutput.ExperienceEntryBuilder();
+        current =
+            new com.jobcopilot.profile_service.parser.model.output.ExperienceExtractedOutput
+                .ExperienceEntryBuilder();
         current.headerLine = line;
 
         HeaderParse hp = parseHeader(line);
@@ -122,8 +141,11 @@ public class ExperienceExtractor implements PipelineStage {
     }
 
     if (out.isEmpty()) {
-      ExperienceExtractedOutput.ExperienceEntryBuilder fallback =
-          new ExperienceExtractedOutput.ExperienceEntryBuilder();
+      com.jobcopilot.profile_service.parser.model.output.ExperienceExtractedOutput
+              .ExperienceEntryBuilder
+          fallback =
+              new com.jobcopilot.profile_service.parser.model.output.ExperienceExtractedOutput
+                  .ExperienceEntryBuilder();
       fallback.headerLine = null;
       for (String l : lines) {
         if (l == null) continue;
