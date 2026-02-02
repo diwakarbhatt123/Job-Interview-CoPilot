@@ -36,33 +36,40 @@ public class JobAnalysisService {
       ExtractedMetadataOutput analysisResponse =
           (ExtractedMetadataOutput) jobAnalysisPipelineProvider.getObject().execute(request);
 
-      job = jobRepository.findById(job.getId()).get();
-
-      jobRepository.save(
-          job.toBuilder()
-              .input(
-                  job.getInput().toBuilder()
-                      .normalizedText(analysisResponse.normalizedText())
-                      .build())
-              .extracted(
-                  Extracted.builder()
-                      .preferredSkills(analysisResponse.preferredSkills())
-                      .requiredSkills(analysisResponse.requiredSkills())
-                      .seniority(analysisResponse.seniority())
-                      .domain(analysisResponse.domain())
-                      .techStack(analysisResponse.techStack())
-                      .build())
+      jobRepository.markCompletedWithExtracted(
+          job.getId(),
+          job.getAnalysis().lockedBy(),
+          now,
+          analysisResponse.normalizedText(),
+          Extracted.builder()
+              .preferredSkills(analysisResponse.preferredSkills())
+              .requiredSkills(analysisResponse.requiredSkills())
+              .seniority(analysisResponse.seniority())
+              .domain(analysisResponse.domain())
+              .techStack(analysisResponse.techStack())
               .build());
-
-      jobRepository.markCompleted(job.getId(), now);
 
       log.info("Completed job analysis for job {}", job.getId());
     } catch (Exception ex) {
+      String sanitizedMessage = sanitizeErrorMessage(ex);
       Error error =
           new Error(
-              ErrorCode.PARSER_FAILED, ex.getMessage(), "Job analysis processing failed", false);
-      jobRepository.markFailed(job.getId(), now, error);
+              ErrorCode.PARSER_FAILED, sanitizedMessage, "Job analysis processing failed", false);
+      jobRepository.markFailed(job.getId(), job.getAnalysis().lockedBy(), now, error);
       log.error("Failed job analysis for job {}", job.getId(), ex);
     }
+  }
+
+  private String sanitizeErrorMessage(Exception ex) {
+    String message = ex.getMessage();
+    if (message == null || message.isBlank()) {
+      return ex.getClass().getSimpleName();
+    }
+    String cleaned = message.replaceAll("\\s+", " ").trim();
+    int maxLength = 500;
+    if (cleaned.length() <= maxLength) {
+      return cleaned;
+    }
+    return cleaned.substring(0, maxLength);
   }
 }
