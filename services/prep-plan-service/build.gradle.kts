@@ -3,9 +3,9 @@ import com.github.spotbugs.snom.SpotBugsTask
 
 plugins {
 	java
-	id("org.springframework.boot") version "4.0.1"
+	id("org.springframework.boot") version "4.0.2"
 	id("io.spring.dependency-management") version "1.1.7"
-  id("com.diffplug.spotless") version "8.1.0"
+  id("com.diffplug.spotless") version "8.2.1"
   id("com.github.spotbugs") version "6.4.8"
 }
 

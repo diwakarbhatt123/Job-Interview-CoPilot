@@ -2,6 +2,7 @@ package com.jobcopilot.job_analyzer_service.repository;
 
 import com.jobcopilot.job_analyzer_service.entity.Job;
 import com.jobcopilot.job_analyzer_service.entity.values.Error;
+import com.jobcopilot.job_analyzer_service.entity.values.Extracted;
 import com.jobcopilot.job_analyzer_service.enums.AnalysisStatus;
 import java.time.Instant;
 import java.util.Optional;
@@ -58,11 +59,21 @@ public class JobRepositoryImpl implements JobRepositoryCustom {
   }
 
   @Override
-  public void markCompleted(String jobId, Instant now) {
+  public void markCompletedWithExtracted(
+      String jobId, String lockedBy, Instant now, String normalizedText, Extracted extracted) {
     MongoOperations mongoOperations = mongoOperationsProvider.getObject();
-    Query query = new Query(Criteria.where("_id").is(jobId));
+    Query query =
+        new Query(
+            Criteria.where("_id")
+                .is(jobId)
+                .and("analysis.status")
+                .is(AnalysisStatus.PROCESSING)
+                .and("analysis.lockedBy")
+                .is(lockedBy));
     Update update =
         new Update()
+            .set("input.normalizedText", normalizedText)
+            .set("extracted", extracted)
             .set("analysis.status", AnalysisStatus.COMPLETED)
             .set("analysis.completedAt", now)
             .set("analysis.failedAt", null)
@@ -74,9 +85,16 @@ public class JobRepositoryImpl implements JobRepositoryCustom {
   }
 
   @Override
-  public void markFailed(String jobId, Instant now, Error error) {
+  public void markFailed(String jobId, String lockedBy, Instant now, Error error) {
     MongoOperations mongoOperations = mongoOperationsProvider.getObject();
-    Query query = new Query(Criteria.where("_id").is(jobId));
+    Query query =
+        new Query(
+            Criteria.where("_id")
+                .is(jobId)
+                .and("analysis.status")
+                .is(AnalysisStatus.PROCESSING)
+                .and("analysis.lockedBy")
+                .is(lockedBy));
     Update update =
         new Update()
             .set("analysis.status", AnalysisStatus.FAILED)
