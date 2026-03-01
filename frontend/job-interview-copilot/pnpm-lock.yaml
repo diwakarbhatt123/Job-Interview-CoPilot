@@ -37,8 +37,8 @@ importers:
         specifier: ^14.6.1
         version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/formidable':
-        specifier: ^3.4.5
-        version: 3.4.6
+        specifier: ^3.4.7
+        version: 3.4.7
       '@types/jest':
         specifier: ^30.0.0
         version: 30.0.0
@@ -858,8 +858,8 @@ packages:
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
-  '@types/formidable@3.4.6':
-    resolution: {integrity: sha512-LI4Hk+KNsM5q7br4oMVoaWeb+gUqJpz1N8+Y2Q6Cz9cVH33ybahRKUWaRmMboVlkwSbOUGgwc/pEkS7yMSzoWg==}
+  '@types/formidable@3.4.7':
+    resolution: {integrity: sha512-EN2atJPHCiD5LBqgX0cUjL4n1XA84MpUVwrXDC8en4K8TFIaPB7zC/Im1EbTMC9biUnMdfhaVRmUKzN4n6pJ/g==}
 
   '@types/istanbul-lib-coverage@2.0.6':
     resolution: {integrity: sha512-2QF/t/auWm0lsy8XtKVPG19v3sSOQlJe/YHZgfjb/KBBHOGSV+J2q/S671rcq9uTBrLAXmZpqJiaQbMT+zNU1w==}
@@ -3976,7 +3976,7 @@ snapshots:
 
   '@types/estree@1.0.8': {}
 
-  '@types/formidable@3.4.6':
+  '@types/formidable@3.4.7':
     dependencies:
       '@types/node': 25.3.3
 
