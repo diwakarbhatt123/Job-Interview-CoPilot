@@ -54,7 +54,7 @@ dependencies {
         implementation("org.apache.logging.log4j:log4j-core:2.25.3") {
             because("CVE-2025-68161: fix TLS hostname verification in SocketAppender")
         }
-        implementation("org.eclipse.jgit:org.eclipse.jgit:7.5.0.202512021534-r") {
+        implementation("org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r") {
             because("CVE-2025-4949: XXE in ManifestParser/AmazonS3 transport")
         }
         implementation("com.fasterxml.jackson.core:jackson-core:2.21.0") {
