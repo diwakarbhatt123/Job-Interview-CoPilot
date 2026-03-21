@@ -46,11 +46,6 @@ jobs:
                 continue;
               }
 
-              if (!pr.maintainer_can_modify) {
-                core.info(`Skipping PR #${pr.number}; maintainers cannot modify the head branch.`);
-                continue;
-              }
-
               try {
                 await github.rest.pulls.updateBranch({
                   owner,
