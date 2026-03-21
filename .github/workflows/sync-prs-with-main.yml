@@ -57,6 +57,14 @@ jobs:
                 core.info(`Queued branch update for #${pr.number} (${pr.title}).`);
               } catch (error) {
                 const status = error?.status ? ` (HTTP ${error.status})` : '';
+                if (error?.status === 403 && /permission to update head repository/i.test(error.message || '')) {
+                  core.warning(
+                    `Could not update PR branches${status}: ${error.message}. Stopping further attempts to avoid repeated warnings. ` +
+                    `Check repository Actions workflow permissions and branch protections.`
+                  );
+                  break;
+                }
+
                 core.warning(`Could not update #${pr.number}${status}: ${error.message}`);
               }
             }
