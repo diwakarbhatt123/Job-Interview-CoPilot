@@ -47,7 +47,7 @@ dependencies {
         implementation("org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r") {
             because("CVE-2025-4949: XXE in ManifestParser/AmazonS3 transport")
         }
-        implementation("com.fasterxml.jackson.core:jackson-core:2.21.2") {
+        implementation("com.fasterxml.jackson.core:jackson-core:2.21.3") {
             because("CVE-2025-52999: avoid StackoverflowError on deeply nested input")
         }
     }
