@@ -3,10 +3,10 @@ import com.github.spotbugs.snom.SpotBugsTask
 
 plugins {
 	java
-	id("org.springframework.boot") version "4.0.5"
+	id("org.springframework.boot") version "4.0.6"
 	id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "8.9.0"
-  id("com.github.spotbugs") version "6.4.8"
+  id("com.github.spotbugs") version "6.4.12"
 }
 
 group = "com.jobcopilot"
@@ -47,7 +47,7 @@ dependencies {
         implementation("org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r") {
             because("CVE-2025-4949: XXE in ManifestParser/AmazonS3 transport")
         }
-        implementation("com.fasterxml.jackson.core:jackson-core:2.21.2") {
+        implementation("com.fasterxml.jackson.core:jackson-core:2.21.3") {
             because("CVE-2025-52999: avoid StackoverflowError on deeply nested input")
         }
     }
