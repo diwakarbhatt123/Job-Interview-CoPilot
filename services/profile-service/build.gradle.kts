@@ -36,7 +36,7 @@ dependencies {
     implementation("org.jobcopilot:parser-core:0.0.1-SNAPSHOT")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:4.0.2")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.apache.pdfbox:pdfbox:3.0.6")
+    implementation("org.apache.pdfbox:pdfbox:3.0.7")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 //	developmentOnly("org.springframework.boot:spring-boot-docker-compose")

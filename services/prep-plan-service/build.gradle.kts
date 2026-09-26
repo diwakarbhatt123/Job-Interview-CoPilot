@@ -5,7 +5,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "4.0.5"
 	id("io.spring.dependency-management") version "1.1.7"
-  id("com.diffplug.spotless") version "8.4.0"
+  id("com.diffplug.spotless") version "8.9.0"
   id("com.github.spotbugs") version "6.4.8"
 }
 
@@ -41,7 +41,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     constraints {
-        implementation("org.apache.logging.log4j:log4j-core:2.25.4") {
+        implementation("org.apache.logging.log4j:log4j-core:2.26.0") {
             because("CVE-2025-68161: fix TLS hostname verification in SocketAppender")
         }
         implementation("org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r") {
