@@ -3,9 +3,9 @@ import com.github.spotbugs.snom.SpotBugsTask
 
 plugins {
 	java
-	id("org.springframework.boot") version "4.0.2"
+	id("org.springframework.boot") version "4.0.3"
 	id("io.spring.dependency-management") version "1.1.7"
-    id("com.diffplug.spotless") version "8.2.1"
+    id("com.diffplug.spotless") version "8.3.0"
     id("com.github.spotbugs") version "6.4.8"
 }
 
@@ -34,7 +34,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jobcopilot:auth-core:0.0.1-SNAPSHOT")
     implementation("org.jobcopilot:parser-core:0.0.1-SNAPSHOT")
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb:4.0.2")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb:4.0.3")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.apache.pdfbox:pdfbox:3.0.7")
 	compileOnly("org.projectlombok:lombok")
@@ -54,7 +54,7 @@ dependencies {
         implementation("org.eclipse.jgit:org.eclipse.jgit:7.5.0.202512021534-r") {
             because("CVE-2025-4949: XXE in ManifestParser/AmazonS3 transport")
         }
-        implementation("com.fasterxml.jackson.core:jackson-core:2.21.0") {
+        implementation("com.fasterxml.jackson.core:jackson-core:2.21.1") {
             because("CVE-2025-52999: avoid StackoverflowError on deeply nested input")
         }
     }
