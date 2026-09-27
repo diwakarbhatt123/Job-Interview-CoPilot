@@ -41,13 +41,13 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     constraints {
-        implementation("org.apache.logging.log4j:log4j-core:2.26.0") {
+        implementation("org.apache.logging.log4j:log4j-core:2.26.1") {
             because("CVE-2025-68161: fix TLS hostname verification in SocketAppender")
         }
-        implementation("org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r") {
+        implementation("org.eclipse.jgit:org.eclipse.jgit:7.8.0.202609011348-r") {
             because("CVE-2025-4949: XXE in ManifestParser/AmazonS3 transport")
         }
-        implementation("com.fasterxml.jackson.core:jackson-core:2.21.3") {
+        implementation("com.fasterxml.jackson.core:jackson-core:2.22.3") {
             because("CVE-2025-52999: avoid StackoverflowError on deeply nested input")
         }
     }
