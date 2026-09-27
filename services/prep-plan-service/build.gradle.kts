@@ -59,7 +59,7 @@ tasks.withType<Test> {
 
 spotless {
     java {
-        googleJavaFormat("1.29.0")
+        googleJavaFormat("1.30.0")
         target("src/**/*.java")
     }
 
