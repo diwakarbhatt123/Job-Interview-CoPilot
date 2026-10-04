@@ -5,7 +5,7 @@ plugins {
     java
     id("org.springframework.boot") version "4.1.1"
     id("io.spring.dependency-management") version "1.1.7"
-    id("com.github.spotbugs") version "6.4.8"
+    id("com.github.spotbugs") version "6.5.12"
     id("com.diffplug.spotless") version "8.3.0"
 }
 
@@ -54,10 +54,10 @@ dependencies {
         implementation("org.apache.logging.log4j:log4j-core:2.25.3") {
             because("CVE-2025-68161: fix TLS hostname verification in SocketAppender")
         }
-        implementation("org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r") {
+        implementation("org.eclipse.jgit:org.eclipse.jgit:7.8.0.202609011348-r") {
             because("CVE-2025-4949: XXE in ManifestParser/AmazonS3 transport")
         }
-        implementation("com.fasterxml.jackson.core:jackson-core:2.21.1") {
+        implementation("com.fasterxml.jackson.core:jackson-core:2.22.3") {
             because("CVE-2025-52999: avoid StackoverflowError on deeply nested input")
         }
     }
