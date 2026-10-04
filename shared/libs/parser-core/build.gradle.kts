@@ -5,7 +5,7 @@ import org.gradle.kotlin.dsl.withType
 plugins {
     id("java")
     id("com.diffplug.spotless") version "8.3.0"
-    id("com.github.spotbugs") version "6.4.8"
+    id("com.github.spotbugs") version "6.5.12"
 }
 
 group = "org.jobcopilot"
