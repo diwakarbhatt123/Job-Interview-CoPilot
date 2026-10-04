@@ -3,7 +3,7 @@ import com.github.spotbugs.snom.SpotBugsTask
 
 plugins {
 	java
-	id("org.springframework.boot") version "4.0.3"
+	id("org.springframework.boot") version "4.1.1"
 	id("io.spring.dependency-management") version "1.1.7"
     id("com.diffplug.spotless") version "8.3.0"
     id("com.github.spotbugs") version "6.5.12"
@@ -45,16 +45,16 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-webmvc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
-    testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.24.0")
+    testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:5.0.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     constraints {
-        implementation("org.apache.logging.log4j:log4j-core:2.25.3") {
+        implementation("org.apache.logging.log4j:log4j-core:2.26.1") {
             because("CVE-2025-68161: fix TLS hostname verification in SocketAppender")
         }
-        implementation("org.eclipse.jgit:org.eclipse.jgit:7.5.0.202512021534-r") {
+        implementation("org.eclipse.jgit:org.eclipse.jgit:7.8.0.202609011348-r") {
             because("CVE-2025-4949: XXE in ManifestParser/AmazonS3 transport")
         }
-        implementation("com.fasterxml.jackson.core:jackson-core:2.21.1") {
+        implementation("com.fasterxml.jackson.core:jackson-core:2.22.3") {
             because("CVE-2025-52999: avoid StackoverflowError on deeply nested input")
         }
     }
