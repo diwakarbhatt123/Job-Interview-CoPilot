@@ -31,7 +31,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.1.2")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.1.3")
     }
 }
 
@@ -53,10 +53,10 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-webmvc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
     testImplementation("org.springframework.boot:spring-boot-test-autoconfigure")
-    testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.24.0")
+    testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:5.0.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     constraints {
-        implementation("org.apache.logging.log4j:log4j-core:2.25.3") {
+        implementation("org.apache.logging.log4j:log4j-core:2.26.1") {
             because("CVE-2025-68161: fix TLS hostname verification in SocketAppender")
         }
         implementation("org.eclipse.jgit:org.eclipse.jgit:7.8.0.202609011348-r") {
