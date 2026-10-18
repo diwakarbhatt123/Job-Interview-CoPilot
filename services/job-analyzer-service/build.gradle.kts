@@ -6,7 +6,7 @@ plugins {
 	id("org.springframework.boot") version "4.1.1"
 	id("io.spring.dependency-management") version "1.1.7"
     id("com.diffplug.spotless") version "8.3.0"
-    id("com.github.spotbugs") version "6.5.12"
+    id("com.github.spotbugs") version "6.5.13"
 }
 
 group = "com.jobcopilot"
@@ -41,7 +41,7 @@ dependencies {
     implementation("org.jobcopilot:auth-core:0.0.1-SNAPSHOT")
     implementation("org.jobcopilot:parser-core:0.0.1-SNAPSHOT")
     implementation("com.jobcopilot:profile-service-client:0.0.1-SNAPSHOT")
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb:4.0.3")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb:4.1.1")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 	compileOnly("org.projectlombok:lombok")
